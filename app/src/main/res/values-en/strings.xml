@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MyFitTracker</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_training">Training</string>
+    <string name="nav_settings">Settings</string>
+</resources>
