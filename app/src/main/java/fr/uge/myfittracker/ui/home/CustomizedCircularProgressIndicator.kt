@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.text.drawText
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,6 +54,8 @@ fun CustomizedCircularProgressIndicator(
             val height = size.height
             val circleThickness = width / 25f
             circleCenter = Offset(x = width/2f, y = height/2f)
+
+            val wards = listOf(20, 50, 80)
 
             drawCircle(
                 brush = Brush.radialGradient(
@@ -118,7 +121,7 @@ fun CustomizedCircularProgressIndicator(
                     pivot = start
                 ){
                     drawLine(
-                        color = color,
+                        color = if(i in wards) Color.Black else color,
                         start = start,
                         end = end,
                         strokeWidth = 1.dp.toPx()
