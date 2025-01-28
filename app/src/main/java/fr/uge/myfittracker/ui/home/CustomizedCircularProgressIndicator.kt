@@ -39,9 +39,10 @@ fun CustomizedCircularProgressIndicator(
     var circleCenter by remember {
         mutableStateOf(Offset.Zero)
     }
-    var positionValue by remember {
-        mutableStateOf(initialValue)
-    }
+//    var positionValue by remember {
+//        mutableStateOf(initialValue)
+//    }
+    val positionValue = initialValue
 
     Box(
         modifier = modifier

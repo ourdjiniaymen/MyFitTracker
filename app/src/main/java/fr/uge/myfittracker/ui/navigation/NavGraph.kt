@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import fr.uge.myfittracker.ui.home.HomeScreen
+import fr.uge.myfittracker.ui.home.viewmodel.HomeViewModel
 import fr.uge.myfittracker.ui.settings.SettingsScreen
 import fr.uge.myfittracker.ui.training.TrainingScreen
 
@@ -15,7 +16,7 @@ fun NavGraph(navController: NavHostController) {
         startDestination = BottomNavItem.Home.navRoute
     ) {
         composable(BottomNavItem.Home.navRoute) {
-            HomeScreen()
+            HomeScreen(HomeViewModel())
         }
         composable(BottomNavItem.Train.navRoute) {
             TrainingScreen()

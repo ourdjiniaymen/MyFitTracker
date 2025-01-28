@@ -11,5 +11,6 @@ data class DailyPerformance (
     val validatedSteps: Int = 0,
     val distance: Float = 0f,
     val calories: Float = 0f,
-    val stars: Int = 0
+    val stars: Int = 0,
+    val level: Int = 0
 )

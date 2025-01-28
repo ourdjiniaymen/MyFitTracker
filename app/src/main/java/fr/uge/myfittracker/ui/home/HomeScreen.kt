@@ -7,18 +7,24 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -26,8 +32,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,15 +48,36 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import fr.uge.myfittracker.ui.home.viewmodel.HomeViewModel
 import fr.uge.myfittracker.ui.theme.*
 import kotlinx.coroutines.delay
 import java.util.*
 import java.text.SimpleDateFormat
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(homeViewModel: HomeViewModel) {
+
+    val dailyStepsGoal by homeViewModel.dailyStepsGoal.collectAsState()
+
+    val dailySteps by homeViewModel.dailySteps.collectAsState()
+    val dailyValidatedSteps by homeViewModel.dailyValidatedSteps.collectAsState()
+    val dailyDistance by homeViewModel.dailyDistance.collectAsState()
+    val dailyCalories by homeViewModel.dailyCalories.collectAsState()
+    val dailyStars by homeViewModel.dailyStars.collectAsState()
+    val dailyLevel by homeViewModel.dailyLevel.collectAsState()
+
+    val totalSteps by homeViewModel.totalSteps.collectAsState()
+    val totalDistance by homeViewModel.totalDistance.collectAsState()
+    val totalCalories by homeViewModel.totalCalories.collectAsState()
+    val totalStars by homeViewModel.totalStars.collectAsState()
+
     val currentTime = remember { mutableStateOf(getCurrentTime()) }
     val currentDate = remember { mutableStateOf(getCurrentDate()) }
+
+    var showDialog by remember { mutableStateOf(false) }
+    var dialogTitle by remember { mutableStateOf("") }
+    var dialogText by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -62,7 +92,7 @@ fun HomeScreen() {
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        TopBar()
+        TopBar(totalStars)
         CurrentDateTime(currentTime.value,currentDate.value)
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
@@ -73,7 +103,7 @@ fun HomeScreen() {
                     .size(250.dp)
                     //.background(color = if (darkTheme) Color.Black else Color.White),
                     .background(Color.Transparent),
-                initialValue = 30,
+                initialValue = homeViewModel.convertStepsToPercentage(dailySteps, dailyStepsGoal),
                 primaryColor = primary,
                 secondaryColor = Color.LightGray,
                 circleRadius = 230f,
@@ -82,24 +112,73 @@ fun HomeScreen() {
                 }
             )
             Text(
-                text = "520",
+                text = "$dailySteps",
                 color = Color.Black,
                 fontSize = 40.sp,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "pas effectués",
+                text = "pas effectués sur $dailyStepsGoal",
                 color = Color.Gray,
             )
         }
-        ValidateButton(){}
+        ValidateButton(){
+            homeViewModel.incrementSteps(500)
+            if ((dailyLevel == 0)  ) {
+                if (dailySteps >= dailyStepsGoal * 0.20){
+                    homeViewModel.incrementLevel(1)
+                    homeViewModel.incrementStars(2)
+                    dialogTitle = "Bravo !"
+                    dialogText = "Vous venez d'atteindre le niveau 1 et de mériter 2★"
+                } else {
+                    dialogTitle = "Encore un petit effort !"
+                    dialogText = "Encore ${((dailyStepsGoal * 0.20) - dailySteps).toInt()} pas pour atteindre le niveau suivant et gagner 2★ de plus"
+                }
+                showDialog = true
+            } else if ((dailyLevel == 1) ) {
+                if (dailySteps >= dailyStepsGoal * 0.50) {
+                    homeViewModel.incrementLevel(1)
+                    homeViewModel.incrementStars(5)
+                    dialogTitle = "Bravo !"
+                    dialogText = "Vous venez d'atteindre le niveau 2 et de mériter 5★"
+                } else {
+                    dialogTitle = "Encore un petit effort !"
+                    dialogText = "Encore ${((dailyStepsGoal * 0.50) - dailySteps).toInt()} pas pour atteindre le niveau suivant et gagner 5★ de plus"
+                }
+                showDialog = true
+            }else if ((dailyLevel == 2) ) {
+                if (dailySteps >= dailyStepsGoal * 0.80){
+                    homeViewModel.incrementLevel(1)
+                    homeViewModel.incrementStars(8)
+                    dialogTitle = "Bravo !"
+                    dialogText = "Vous venez d'atteindre le niveau 3 et de mériter 8★"
+                } else {
+                    dialogTitle = "Encore un petit effort !"
+                    dialogText = "Encore ${((dailyStepsGoal * 0.80) - dailySteps).toInt()} pas pour atteindre le niveau suivant et gagner 8★ de plus"
+                }
+                showDialog = true
+            }
+        }
+        // Show le Dialog if showDialog is true
+        if (showDialog) {
+            MinimalDialog(title = dialogTitle, text = dialogText) {
+                showDialog = false // click anywhere to close dialog
+            }
+        }
+
         Statistics(
-            distance= 5,
-            calories= 10,
-            points= 20
+            distance= homeViewModel.calculateDistance(dailySteps), //dailyDistance,
+            calories= homeViewModel.calculateCalories(dailySteps), //dailyCalories
+            points= dailyStars
         )
     }
 
+}
+
+fun convertStepsToPercentage(currentSteps: Int, goalSteps: Int): Int {
+    if (goalSteps == 0) return 0
+    val percentage = (currentSteps * 100) / goalSteps
+    return if (percentage > 100) 100 else percentage
 }
 
 fun getCurrentTime(): String {
@@ -140,7 +219,7 @@ fun CurrentDateTime(
 }
 
 @Composable
-fun TopBar(){
+fun TopBar(stars: Int){
     Row (
         modifier = Modifier
             .fillMaxWidth()
@@ -167,11 +246,13 @@ fun TopBar(){
                     .background(color = secondary.copy(alpha = 0.2f))
                     .padding(horizontal = 16.dp)
             ){
-                Text("200 ★", color = secondary, fontWeight = FontWeight.Bold)
+                Text("$stars ★", color = secondary, fontWeight = FontWeight.Bold)
             }
             Spacer(modifier = Modifier.width(8.dp))
             IconButton(
-                onClick = {}
+                onClick = {
+                    //TODO : goto the profile page
+                }
             ) {
                 Icon(
                     imageVector = Icons.Default.Person,
@@ -200,7 +281,7 @@ fun ValidateButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun Statistics(distance: Int, calories: Int, points: Int) {
+fun Statistics(distance: Double, calories: Double, points: Int) {
     Box (
         modifier = Modifier.padding(16.dp)
     ) {
@@ -233,8 +314,85 @@ fun Statistics(distance: Int, calories: Int, points: Int) {
     }
 }
 
+@Composable
+fun MinimalDialog(title: String, text: String, onDismissRequest: () -> Unit) {
+    Dialog(onDismissRequest = { onDismissRequest() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.4f)
+                .padding(16.dp)
+                .background(Color.White),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column (
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.SpaceEvenly,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                if(title == "Bravo !")
+                    Icon(
+                        modifier = Modifier.size(40.dp),
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = "Profile Icon",
+                        tint = primary
+                    )
+                else
+                    Icon(
+                        modifier = Modifier.size(40.dp),
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = "Profile Icon",
+                        tint = primary
+                    )
+                Text(
+                    text = title,
+                    color = Color.Black,
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = text,
+                    color = Color.Black,
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center,
+                    //fontWeight = FontWeight.Bold
+                )
+                if(title == "Bravo !")
+                    Button(
+                        onClick = {
+                            //TODO: Go to the game page
+                        },
+                        modifier = Modifier.fillMaxWidth(0.6f),
+                        colors = ButtonDefaults.buttonColors(primary)
+                    ) {
+                        Text(
+                            text = "Débloquer le jeu",
+                            color = Color.White
+                        )
+                    }
+                else
+                    Button(
+                        onClick = {
+                            onDismissRequest()
+                        },
+                        modifier = Modifier.fillMaxWidth(0.6f),
+                        colors = ButtonDefaults.buttonColors(primary)
+                    ) {
+                        Text(
+                        text = "OK",
+                        color = Color.White
+                        )
+                    }
+            }
+
+        }
+    }
+}
+
 @Preview
 @Composable
 fun HomeScreenPreview(){
-    HomeScreen()
+    //HomeScreen(HomeViewModel())
+    MinimalDialog(title="Bravo !", text="hahahahahahh"){}
 }

@@ -1,4 +1,4 @@
-package fr.uge.myfittracker.data.local.viewmodel
+package fr.uge.myfittracker.ui.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -50,7 +50,7 @@ class PerformanceViewModel(private val view: PerformanceView) : ViewModel(){
                     totalPerformance.copy(
                         totalSteps = totalPerformance.totalSteps + newSteps,
                         totalDistance = totalPerformance.totalDistance + newDistance,
-                        totalCalories = totalPerformance.totalCalories + newCalories,
+                            totalCalories = totalPerformance.totalCalories + newCalories,
                         totalStars = totalPerformance.totalStars + newStars
                     )
                 )
