@@ -1,12 +1,19 @@
 package fr.uge.myfittracker.ui.home.viewmodel
 
+import android.app.Application
+import android.content.Context
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
-class HomeViewModel: ViewModel() {
+class HomeViewModel(context: Context): ViewModel() {
+
+    private val stepCounterViewModel: StepCounterViewModel = StepCounterViewModel(context)
 
     private val _dailyStepsGoal = MutableStateFlow(6000)
+    //private val _dailyStepsGoal = MutableStateFlow(100) // just for test
     val dailyStepsGoal: StateFlow<Int> = _dailyStepsGoal
 
     //Daily perfermances
@@ -40,6 +47,15 @@ class HomeViewModel: ViewModel() {
 
     private val _totalStars = MutableStateFlow(0)
     val totalStars: StateFlow<Int> = _totalStars
+
+
+    init {
+        viewModelScope.launch {
+            stepCounterViewModel.stepCount.collect { steps ->
+                _dailySteps.value = steps
+            }
+        }
+    }
 
     fun incrementSteps(steps: Int) {
         _dailySteps.value += steps

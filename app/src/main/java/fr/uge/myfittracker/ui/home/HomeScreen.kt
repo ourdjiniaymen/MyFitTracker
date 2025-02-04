@@ -1,5 +1,7 @@
 package fr.uge.myfittracker.ui.home
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -42,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -49,18 +52,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 import fr.uge.myfittracker.ui.home.viewmodel.HomeViewModel
+import fr.uge.myfittracker.ui.home.viewmodel.StepCounterViewModel
 import fr.uge.myfittracker.ui.theme.*
 import kotlinx.coroutines.delay
 import java.util.*
 import java.text.SimpleDateFormat
 
 @Composable
-fun HomeScreen(homeViewModel: HomeViewModel) {
+fun HomeScreen(
+    homeViewModel: HomeViewModel = viewModel()
+) {
 
     val dailyStepsGoal by homeViewModel.dailyStepsGoal.collectAsState()
 
     val dailySteps by homeViewModel.dailySteps.collectAsState()
+    Log.d("HomeScreen", "Pas actuels: $dailySteps") // Vérifier que les valeurs changent
+
     val dailyValidatedSteps by homeViewModel.dailyValidatedSteps.collectAsState()
     val dailyDistance by homeViewModel.dailyDistance.collectAsState()
     val dailyCalories by homeViewModel.dailyCalories.collectAsState()
@@ -123,7 +132,7 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
             )
         }
         ValidateButton(){
-            homeViewModel.incrementSteps(500)
+            //homeViewModel.incrementSteps(500) //just for test
             if ((dailyLevel == 0)  ) {
                 if (dailySteps >= dailyStepsGoal * 0.20){
                     homeViewModel.incrementLevel(1)
@@ -280,6 +289,7 @@ fun ValidateButton(onClick: () -> Unit) {
     }
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun Statistics(distance: Double, calories: Double, points: Int) {
     Box (
@@ -295,13 +305,13 @@ fun Statistics(distance: Double, calories: Double, points: Int) {
         ) {
             // Distance
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = "$distance Km", style = MaterialTheme.typography.titleMedium)
+                Text(text = String.format("%.2f Km", distance), style = MaterialTheme.typography.titleMedium)
                 Text(text = "distance", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
             }
             VerticalDivider(color = Color.Gray)
             // Calories
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = "$calories kCal", style = MaterialTheme.typography.titleMedium)
+                Text(text = String.format("%.2f kCal", calories), style = MaterialTheme.typography.titleMedium)
                 Text(text = "calories", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
             }
             VerticalDivider(color = Color.Gray)
@@ -322,7 +332,7 @@ fun MinimalDialog(title: String, text: String, onDismissRequest: () -> Unit) {
                 .fillMaxWidth()
                 .fillMaxHeight(0.4f)
                 .padding(16.dp)
-                .background(Color.White),
+                .background(Color.Transparent),
             shape = RoundedCornerShape(16.dp),
         ) {
             Column (
