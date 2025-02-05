@@ -70,15 +70,10 @@ fun HomeScreen(
     val dailySteps by homeViewModel.dailySteps.collectAsState()
     Log.d("HomeScreen", "Pas actuels: $dailySteps") // Vérifier que les valeurs changent
 
-    val dailyValidatedSteps by homeViewModel.dailyValidatedSteps.collectAsState()
-    val dailyDistance by homeViewModel.dailyDistance.collectAsState()
-    val dailyCalories by homeViewModel.dailyCalories.collectAsState()
     val dailyStars by homeViewModel.dailyStars.collectAsState()
     val dailyLevel by homeViewModel.dailyLevel.collectAsState()
 
     val totalSteps by homeViewModel.totalSteps.collectAsState()
-    val totalDistance by homeViewModel.totalDistance.collectAsState()
-    val totalCalories by homeViewModel.totalCalories.collectAsState()
     val totalStars by homeViewModel.totalStars.collectAsState()
 
     val currentTime = remember { mutableStateOf(getCurrentTime()) }

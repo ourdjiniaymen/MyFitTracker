@@ -12,22 +12,13 @@ class HomeViewModel(context: Context): ViewModel() {
 
     private val stepCounterViewModel: StepCounterViewModel = StepCounterViewModel(context)
 
-    private val _dailyStepsGoal = MutableStateFlow(6000)
-    //private val _dailyStepsGoal = MutableStateFlow(100) // just for test
+    //private val _dailyStepsGoal = MutableStateFlow(6000)
+    private val _dailyStepsGoal = MutableStateFlow(100) // just for test
     val dailyStepsGoal: StateFlow<Int> = _dailyStepsGoal
 
     //Daily perfermances
     private val _dailySteps = MutableStateFlow(0)
     val dailySteps: StateFlow<Int> = _dailySteps
-
-    private val _dailyValidatedSteps = MutableStateFlow(0)
-    val dailyValidatedSteps: StateFlow<Int> = _dailyValidatedSteps
-
-    private val _dailyDistance = MutableStateFlow(0.0)
-    val dailyDistance: StateFlow<Double> = _dailyDistance
-
-    private val _dailyCalories = MutableStateFlow(0.0)
-    val dailyCalories: StateFlow<Double> = _dailyCalories
 
     private val _dailyStars = MutableStateFlow(0)
     val dailyStars: StateFlow<Int> = _dailyStars
@@ -38,12 +29,6 @@ class HomeViewModel(context: Context): ViewModel() {
     //Total perfermances
     private val _totalSteps = MutableStateFlow(0)
     val totalSteps: StateFlow<Int> = _totalSteps
-
-    private val _totalDistance = MutableStateFlow(0.0)
-    val totalDistance: StateFlow<Double> = _totalDistance
-
-    private val _totalCalories = MutableStateFlow(0.0)
-    val totalCalories: StateFlow<Double> = _totalCalories
 
     private val _totalStars = MutableStateFlow(0)
     val totalStars: StateFlow<Int> = _totalStars
@@ -74,9 +59,6 @@ class HomeViewModel(context: Context): ViewModel() {
     // Daily reset (to call at midnight)
     fun resetDailyPerformance() {
         _dailySteps.value = 0
-        _dailyValidatedSteps.value = 0
-        _dailyDistance.value = 0.0
-        _dailyCalories.value = 0.0
         _dailyStars.value = 0
         _dailyLevel.value = 0
     }

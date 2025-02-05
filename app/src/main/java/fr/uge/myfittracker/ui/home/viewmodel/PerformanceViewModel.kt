@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 
 class PerformanceViewModel(private val view: PerformanceView) : ViewModel(){
 
-    fun updatePerformance(newSteps: Int, newDistance: Float, newCalories: Float, newStars: Int) {
+    fun updatePerformance(newSteps: Int, newStars: Int, newLevel : Int) {
         val currentDate = getCurrentDate()
         viewModelScope.launch {
             val dailyPerformance = view.getDailyPerformanceByDate(currentDate)
@@ -19,18 +19,16 @@ class PerformanceViewModel(private val view: PerformanceView) : ViewModel(){
                     DailyPerformance(
                         date = currentDate,
                         steps = newSteps,
-                        distance = newDistance,
-                        calories = newCalories,
-                        stars = newStars
+                        stars = newStars,
+                        level = newLevel
                     )
                 )
             } else {
                 view.insertDailyPerformance(
                     dailyPerformance.copy(
                         steps = dailyPerformance.steps + newSteps,
-                        distance = dailyPerformance.distance + newDistance,
-                        calories = dailyPerformance.calories + newCalories,
-                        stars = dailyPerformance.stars + newStars
+                        stars = dailyPerformance.stars + newStars,
+                        level = dailyPerformance.level + newLevel,
                     )
                 )
             }
@@ -40,8 +38,6 @@ class PerformanceViewModel(private val view: PerformanceView) : ViewModel(){
                 view.insertTotalPerformance(
                     TotalPerformance(
                         totalSteps = newSteps,
-                        totalDistance = newDistance,
-                        totalCalories = newCalories,
                         totalStars = newStars
                     )
                 )
@@ -49,8 +45,6 @@ class PerformanceViewModel(private val view: PerformanceView) : ViewModel(){
                 view.updateTotalPerformance(
                     totalPerformance.copy(
                         totalSteps = totalPerformance.totalSteps + newSteps,
-                        totalDistance = totalPerformance.totalDistance + newDistance,
-                            totalCalories = totalPerformance.totalCalories + newCalories,
                         totalStars = totalPerformance.totalStars + newStars
                     )
                 )

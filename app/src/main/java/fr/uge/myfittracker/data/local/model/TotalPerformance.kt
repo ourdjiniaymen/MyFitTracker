@@ -7,7 +7,5 @@ import androidx.room.PrimaryKey
 data class TotalPerformance(
     @PrimaryKey val id: Int = 1,
     val totalSteps: Int = 0,
-    val totalDistance: Float = 0f,
-    val totalCalories: Float = 0f,
     val totalStars: Int = 0
 )

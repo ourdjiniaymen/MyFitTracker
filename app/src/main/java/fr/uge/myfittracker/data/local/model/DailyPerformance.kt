@@ -8,9 +8,6 @@ data class DailyPerformance (
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val date: String,
     val steps: Int = 0,
-    val validatedSteps: Int = 0,
-    val distance: Float = 0f,
-    val calories: Float = 0f,
     val stars: Int = 0,
     val level: Int = 0
 )
