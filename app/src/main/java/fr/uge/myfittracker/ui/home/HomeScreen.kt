@@ -96,7 +96,8 @@ fun HomeScreen(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        TopBar(totalStars)
+        //TopBar(totalStars)
+        TopBar(dailyStars)
         CurrentDateTime(currentTime.value,currentDate.value)
         Column(
             horizontalAlignment = Alignment.CenterHorizontally

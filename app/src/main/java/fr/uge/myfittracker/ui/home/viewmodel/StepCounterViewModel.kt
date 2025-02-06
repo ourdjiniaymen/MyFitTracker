@@ -13,10 +13,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
-class StepCounterViewModel(context: Context) : ViewModel(),
+//class StepCounterViewModel(context: Context) : ViewModel(),
+class StepCounterViewModel(application: Application) : AndroidViewModel(application),
     SensorEventListener {
     private val sensorManager:SensorManager by lazy {
-        context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        application.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        //context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     }
 
     private var sensor: Sensor? = null

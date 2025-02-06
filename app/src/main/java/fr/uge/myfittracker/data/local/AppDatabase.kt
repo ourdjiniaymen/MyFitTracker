@@ -16,7 +16,7 @@ import fr.uge.myfittracker.data.local.model.TotalPerformance
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun dailyPerformanceDao(): DailyPerformanceDao
-    abstract fun totalPerformanceDao(): TotalPerformanceDao
+    //abstract fun totalPerformanceDao(): TotalPerformanceDao
 
     companion object {
         @Volatile

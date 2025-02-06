@@ -16,4 +16,10 @@ interface DailyPerformanceDao {
 
     @Query("SELECT * FROM daily_performance_table")
     suspend fun getAllDailyPerformances(): List<DailyPerformance>
+
+    @Query("SELECT SUM(steps) FROM daily_performance_table")
+    suspend fun getTotalSteps(): Int?
+
+    @Query("SELECT SUM(stars) FROM daily_performance_table")
+    suspend fun getTotalStars(): Int?
 }

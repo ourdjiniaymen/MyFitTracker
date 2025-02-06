@@ -16,8 +16,9 @@ import fr.uge.myfittracker.ui.training.TrainingScreen
 @Composable
 fun NavGraph(navController: NavHostController) {
 
-    val context = LocalContext.current
-    val homeViewModel = remember { HomeViewModel(context) }
+    //val context = LocalContext.current
+    //val homeViewModel = remember { HomeViewModel(context) }
+    val homeViewModel: HomeViewModel = viewModel()
 
     NavHost(
         navController = navController,
