@@ -25,3 +25,24 @@ val borderSecondary = Color(0xFFE6E6E6) // Secondary borders
 val black = Color(0xFF232323)
 val darkGrey = Color(0xFF939393)
 val darkerGrey = Color(0xFF4F4F4F)
+
+val colorPalette = listOf(
+    Color(0xFFEF5350), // Rouge
+    Color(0xFFEC407A), // Rose
+    Color(0xFFAB47BC), // Violet
+    Color(0xFF7E57C2), // Violet foncé
+    Color(0xFF5C6BC0), // Bleu
+    Color(0xFF42A5F5), // Bleu clair
+    Color(0xFF26C6DA), // Cyan
+    Color(0xFF26A69A), // Vert bleu
+    Color(0xFF66BB6A), // Vert
+    Color(0xFF9CCC65), // Vert clair
+    Color(0xFFD4E157), // Jaune vert
+    Color(0xFFFFEE58), // Jaune
+    Color(0xFFFFCA28), // Jaune orangé
+    Color(0xFFFFA726), // Orange
+    Color(0xFFFF7043), // Orange foncé
+    Color(0xFF8D6E63), // Marron
+    Color(0xFFBDBDBD), // Gris
+    Color(0xFF78909C)  // Gris bleu
+)
