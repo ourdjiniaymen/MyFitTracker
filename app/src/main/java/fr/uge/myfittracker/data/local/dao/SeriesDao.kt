@@ -5,15 +5,15 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import fr.uge.myfittracker.data.model.Series
-import fr.uge.myfittracker.data.model.SeriesWithSteps
+import fr.uge.myfittracker.data.model.SeriesWithStep
 
 @Dao
 interface SeriesDao {
     @Insert
-    suspend fun insertSeries(series: Series)
+    suspend fun insertSeries(series: Series) : Long
 
     @Transaction
-    @Query("SELECT * FROM Series WHERE exercise_id = :exerciseId")
-    fun getSeriesWithSteps(exerciseId: Long): List<SeriesWithSteps>
+    @Query("SELECT * FROM series WHERE exercise_id = :exerciseId")
+    suspend fun getListSeriesFromExerciseId(exerciseId : Long) : List<SeriesWithStep>
 
 }

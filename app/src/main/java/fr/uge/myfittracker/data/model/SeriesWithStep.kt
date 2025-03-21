@@ -3,11 +3,11 @@ package fr.uge.myfittracker.data.model
 import androidx.room.Embedded
 import androidx.room.Relation
 
-data class SeriesWithSteps(
+data class SeriesWithStep(
     @Embedded val series: Series,
     @Relation(
-        parentColumn = "id",
-        entityColumn = "series_id"
+        parentColumn = "step_id",
+        entityColumn = "id"
     )
-    val steps: List<Step>
+    val step: Step,
 )

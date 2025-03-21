@@ -13,11 +13,20 @@ import androidx.room.PrimaryKey
             parentColumns = ["id"],
             childColumns = ["exercise_id"],
             onDelete = ForeignKey.CASCADE
+        ),
+
+        ForeignKey(
+            entity = Step::class,
+            parentColumns = ["id"],
+            childColumns = ["step_id"],
+            onDelete = ForeignKey.CASCADE
         )
     ]
 )
 data class Series(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     @ColumnInfo(name = "exercise_id") val exerciseId: Long,
-    val repetition: Int
+    @ColumnInfo(name = "step_id") val stepId: Long,
+    @ColumnInfo(name = "step_repetition") val stepRepetition: Int,
+    @ColumnInfo(name = "repetition_in_exercise") val repetitionInExercise: Int
 );

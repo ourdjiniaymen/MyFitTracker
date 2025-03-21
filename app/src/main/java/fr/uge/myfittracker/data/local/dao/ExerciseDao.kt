@@ -11,9 +11,14 @@ import fr.uge.myfittracker.data.model.ExerciseWithSeries
 interface ExerciseDao {
 
     @Insert
-    suspend fun insertExercise(exercise: Exercise)
+    suspend fun insertExercise(exercise: Exercise): Long
 
     @Transaction
-    @Query("SELECT * FROM Exercise WHERE plan_id = :planId")
-    suspend fun getExercisesForPlan(planId: Long): List<ExerciseWithSeries>
+    @Query(
+        "SELECT exercise.*\n" +
+                "FROM exercise\n" +
+                "JOIN plan_exercise ON exercise.id = plan_exercise.exercise_id\n" +
+                "WHERE plan_exercise.plan_id = :planId;"
+    )
+    suspend fun getExercisesFromPlanId(planId: Long): List<Exercise>
 }

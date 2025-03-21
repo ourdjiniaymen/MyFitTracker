@@ -7,13 +7,13 @@ import fr.uge.myfittracker.data.local.dao.PlanDao
 import fr.uge.myfittracker.data.local.dao.SeriesDao
 import fr.uge.myfittracker.data.local.dao.StepDao
 import fr.uge.myfittracker.data.model.Exercise
+import fr.uge.myfittracker.data.model.ExerciseType
 import fr.uge.myfittracker.data.model.ExerciseWithSeries
 import fr.uge.myfittracker.data.model.Plan
-import fr.uge.myfittracker.data.model.PlanWithExercises
+import fr.uge.myfittracker.data.model.PlanExerciseCrossRef
 import fr.uge.myfittracker.data.model.Series
-import fr.uge.myfittracker.data.model.SeriesWithSteps
+import fr.uge.myfittracker.data.model.SeriesWithStep
 import fr.uge.myfittracker.data.model.Step
-import kotlinx.coroutines.flow.Flow
 
 
 class Repository(
@@ -32,18 +32,49 @@ class Repository(
         planDao = database.planDao()
     }
 
-    suspend fun insertPlan(plan: Plan) = planDao.insertPlan(plan)
-    suspend fun getPlans(): List<PlanWithExercises> =
-        planDao.getAllPlans()
+    suspend fun insertExerciseWithSeries(exerciseWithSeries: ExerciseWithSeries): Long {
+        val exerciseId = exerciseDao.insertExercise(exerciseWithSeries.exercise)
+        exerciseWithSeries.series.forEach { seriesWithStep ->
+            val stepId = stepDao.insertStep(seriesWithStep.step);
+            seriesDao.insertSeries(
+                seriesWithStep.series.copy(
+                    stepId = stepId, exerciseId = exerciseId
+                )
+            )
+        }
+        return exerciseId
+    }
 
-    /** --- Exercise Methods --- **/
-    suspend fun insertExercise(exercise: Exercise) = exerciseDao.insertExercise(exercise)
+    suspend fun insertPlanWithExercises(
+        plan: Plan, exercises: List<ExerciseWithSeries>
+    ): Long {
+        val planId = planDao.insertPlan(plan);
+        exercises.forEach { exerciseWithSeries ->
+            val exerciseId = insertExerciseWithSeries(exerciseWithSeries)
+            planDao.insertPlanExerciseCrossRef(
+                PlanExerciseCrossRef(
+                    planId = planId, exerciseId = exerciseId
+                )
+            )
+        }
+        return planId
+    }
+
+    suspend fun getAllPlans(): List<Plan> {
+        return planDao.getAllPlans()
+    }
+
+    suspend fun getPlanExercises(planId: Long): List<Exercise> {
+        return exerciseDao.getExercisesFromPlanId(planId)
+    }
+
+    suspend fun getPlanExercisesWithSeries(planId: Long): List<ExerciseWithSeries> {
+        return getPlanExercises(planId).map { exercise: Exercise ->
+            ExerciseWithSeries(
+                exercise, seriesDao.getListSeriesFromExerciseId(exercise.id)
+            )
+        }
+    }
 
 
-    /** --- Series Methods --- **/
-    suspend fun insertSeries(series: Series) = seriesDao.insertSeries(series)
-
-
-    /** --- Step Methods --- **/
-    suspend fun insertStep(step: Step) = stepDao.insertStep(step)
 }

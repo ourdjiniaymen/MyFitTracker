@@ -10,9 +10,6 @@ import fr.uge.myfittracker.data.model.Step
 interface StepDao {
 
     @Insert
-    suspend fun insertStep(step: Step);
+    suspend fun insertStep(step: Step): Long
 
-
-    @Query("SELECT * FROM Step WHERE series_id = :seriesId")
-    fun getStepsForSeries(seriesId: Long): List<Step>
 }

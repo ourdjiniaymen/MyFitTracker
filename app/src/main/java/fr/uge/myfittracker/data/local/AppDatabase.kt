@@ -12,12 +12,13 @@ import fr.uge.myfittracker.data.local.dao.SeriesDao
 import fr.uge.myfittracker.data.local.dao.StepDao
 import fr.uge.myfittracker.data.model.Exercise
 import fr.uge.myfittracker.data.model.Plan
+import fr.uge.myfittracker.data.model.PlanExerciseCrossRef
 import fr.uge.myfittracker.data.model.Series
 import fr.uge.myfittracker.data.model.Step
 
 @Database(
-    entities = [Step::class, Series::class, Exercise::class, Plan::class],
-    version = 2
+    entities = [Step::class, Series::class, Exercise::class, Plan::class,  PlanExerciseCrossRef::class],
+    version = 4
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
