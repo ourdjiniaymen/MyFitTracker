@@ -1,27 +1,16 @@
 package fr.uge.myfittracker.data.local.converters
 
 import androidx.room.TypeConverter
-import fr.uge.myfittracker.data.model.ExerciseType
-import fr.uge.myfittracker.data.model.StepType
+import fr.uge.myfittracker.data.model.SessionType
 
 class Converters {
     @TypeConverter
-    fun toExerciseType(name: String): ExerciseType {
-        return ExerciseType.valueOf(name);
+    fun toSessionType(name: String): SessionType {
+        return SessionType.valueOf(name);
     }
 
     @TypeConverter
-    fun fromExerciseType(exerciseType: ExerciseType): String {
-        return exerciseType.name;
-    }
-
-    @TypeConverter
-    fun toStepType(name: String): StepType {
-        return StepType.valueOf(name);
-    }
-
-    @TypeConverter
-    fun fromStepType(stepType: StepType): String {
-        return stepType.name;
+    fun fromSessionType(sessionType: SessionType): String {
+        return sessionType.name;
     }
 }

@@ -1,6 +1,6 @@
 package fr.uge.myfittracker.data.model
 
-enum class ExerciseType {
+enum class SessionType {
     FULL_BODY,
     UPPER_BODY,
     LOWER_BODY,
@@ -8,5 +8,6 @@ enum class ExerciseType {
     CARDIO,
     CORE,
     BALANCE,
-    FLEXIBILITY
+    FLEXIBILITY,
+    REST
 }

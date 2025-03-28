@@ -11,10 +11,10 @@
       <SelectionState runConfigName="useAppContext()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="MainActivity">
+      <SelectionState runConfigName="DatabaseUnitTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="DatabaseUnitTest">
+      <SelectionState runConfigName="insertPlan()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

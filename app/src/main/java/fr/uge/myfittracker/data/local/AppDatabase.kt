@@ -9,30 +9,34 @@ import fr.uge.myfittracker.data.local.converters.Converters
 import fr.uge.myfittracker.data.local.dao.ExerciseDao
 import fr.uge.myfittracker.data.local.dao.PlanDao
 import fr.uge.myfittracker.data.local.dao.SeriesDao
-import fr.uge.myfittracker.data.local.dao.StepDao
+import fr.uge.myfittracker.data.local.dao.SessionDao
 import fr.uge.myfittracker.data.model.Exercise
 import fr.uge.myfittracker.data.model.Plan
-import fr.uge.myfittracker.data.model.PlanExerciseCrossRef
 import fr.uge.myfittracker.data.model.Series
-import fr.uge.myfittracker.data.model.Step
+import fr.uge.myfittracker.data.model.Session
 
 @Database(
-    entities = [Step::class, Series::class, Exercise::class, Plan::class,  PlanExerciseCrossRef::class],
-    version = 4
+    entities = [Exercise::class, Series::class, Session::class, Plan::class],
+    version = 6
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun planDao(): PlanDao
     abstract fun exerciseDao(): ExerciseDao
     abstract fun seriesDao(): SeriesDao
-    abstract fun stepDao(): StepDao
+    abstract fun sessionDao(): SessionDao
+    abstract fun planDao(): PlanDao
 
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
-                Room.databaseBuilder(context, AppDatabase::class.java, "app_db").build()
+                Room.databaseBuilder(
+                    context.applicationContext, // Use application context
+                    AppDatabase::class.java,
+                    "app_db"
+                ).fallbackToDestructiveMigration()
+                    .build()
                     .also { INSTANCE = it }
             }
         }

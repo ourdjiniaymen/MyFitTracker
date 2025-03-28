@@ -1,80 +1,68 @@
 package fr.uge.myfittracker.data.repository
 
 import android.app.Application
+import androidx.room.Transaction
 import fr.uge.myfittracker.data.local.AppDatabase
 import fr.uge.myfittracker.data.local.dao.ExerciseDao
 import fr.uge.myfittracker.data.local.dao.PlanDao
 import fr.uge.myfittracker.data.local.dao.SeriesDao
-import fr.uge.myfittracker.data.local.dao.StepDao
+import fr.uge.myfittracker.data.local.dao.SessionDao
 import fr.uge.myfittracker.data.model.Exercise
-import fr.uge.myfittracker.data.model.ExerciseType
-import fr.uge.myfittracker.data.model.ExerciseWithSeries
-import fr.uge.myfittracker.data.model.Plan
-import fr.uge.myfittracker.data.model.PlanExerciseCrossRef
-import fr.uge.myfittracker.data.model.Series
-import fr.uge.myfittracker.data.model.SeriesWithStep
-import fr.uge.myfittracker.data.model.Step
+import fr.uge.myfittracker.data.model.PlanWithSessions
+import fr.uge.myfittracker.data.model.SeriesWithExercise
+import fr.uge.myfittracker.data.model.Session
+import fr.uge.myfittracker.data.model.SessionWithSeries
 
 
 class Repository(
     application: Application
 ) {
-    private val stepDao: StepDao;
-    private val seriesDao: SeriesDao;
     private val exerciseDao: ExerciseDao;
+    private val seriesDao: SeriesDao;
+    private val sessionDao: SessionDao;
     private val planDao: PlanDao;
 
     init {
         val database = AppDatabase.getDatabase(application)
-        stepDao = database.stepDao()
+        sessionDao = database.sessionDao()
         seriesDao = database.seriesDao()
         exerciseDao = database.exerciseDao()
         planDao = database.planDao()
     }
 
-    suspend fun insertExerciseWithSeries(exerciseWithSeries: ExerciseWithSeries): Long {
-        val exerciseId = exerciseDao.insertExercise(exerciseWithSeries.exercise)
-        exerciseWithSeries.series.forEach { seriesWithStep ->
-            val stepId = stepDao.insertStep(seriesWithStep.step);
-            seriesDao.insertSeries(
-                seriesWithStep.series.copy(
-                    stepId = stepId, exerciseId = exerciseId
-                )
-            )
-        }
-        return exerciseId
+    suspend fun getAllPlans(): List<PlanWithSessions> {
+        return planDao.getAllPlans()
     }
 
-    suspend fun insertPlanWithExercises(
-        plan: Plan, exercises: List<ExerciseWithSeries>
-    ): Long {
-        val planId = planDao.insertPlan(plan);
-        exercises.forEach { exerciseWithSeries ->
-            val exerciseId = insertExerciseWithSeries(exerciseWithSeries)
-            planDao.insertPlanExerciseCrossRef(
-                PlanExerciseCrossRef(
-                    planId = planId, exerciseId = exerciseId
-                )
-            )
+    suspend fun getPlanSessions(planId: Long): List<SessionWithSeries> {
+        return sessionDao.getSessionFromPlanId(planId);
+    }
+
+    @Transaction
+    suspend fun insertPlanWithSessions(planWithSessions: PlanWithSessions): Long {
+        val planId = planDao.insertPlan(planWithSessions.plan);
+        planWithSessions.sessions.forEach { sessionWithSeries ->
+            insertSessionWithSeries(sessionWithSeries, planId)
         }
         return planId
     }
 
-    suspend fun getAllPlans(): List<Plan> {
-        return planDao.getAllPlans()
-    }
-
-    suspend fun getPlanExercises(planId: Long): List<Exercise> {
-        return exerciseDao.getExercisesFromPlanId(planId)
-    }
-
-    suspend fun getPlanExercisesWithSeries(planId: Long): List<ExerciseWithSeries> {
-        return getPlanExercises(planId).map { exercise: Exercise ->
-            ExerciseWithSeries(
-                exercise, seriesDao.getListSeriesFromExerciseId(exercise.id)
-            )
+    @Transaction
+    suspend fun insertSessionWithSeries(sessionWithSeries: SessionWithSeries, planId: Long) {
+        val sessionId = sessionDao.insertSession(sessionWithSeries.session.copy(planId = planId))
+        sessionWithSeries.series.forEach { seriesWithExercise ->
+            insertSeriesWithExercise(seriesWithExercise, sessionId)
         }
     }
 
+    @Transaction
+    suspend fun insertSeriesWithExercise(seriesWithExercise: SeriesWithExercise, sessionId: Long) {
+        val exerciseId = exerciseDao.insertExercise(seriesWithExercise.exercise);
+        seriesDao.insertSeries(
+            seriesWithExercise.series.copy(
+                exerciseId = exerciseId, sessionId = sessionId
+            )
+        );
 
+    }
 }

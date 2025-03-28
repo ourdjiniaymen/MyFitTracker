@@ -9,9 +9,12 @@ import androidx.room.PrimaryKey
 )
 
 data class Exercise(
-    @ColumnInfo(name="id")
+     /*
+     Represents the fundamental entity in the database,
+     not dependent on any other table.
+      */
+     @ColumnInfo(name="id")
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
     val description: String?,
-    val type: ExerciseType,
 )
