@@ -8,15 +8,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import fr.uge.myfittracker.ui.creation.ExerciseScreen
-import fr.uge.myfittracker.ui.creation.StepScreen
 import fr.uge.myfittracker.ui.home.HomeScreen
 import fr.uge.myfittracker.ui.settings.SettingsScreen
-import fr.uge.myfittracker.ui.training.ExerciseViewModel
+import fr.uge.myfittracker.ui.training.SeriesWithExerciseViewModel
 import fr.uge.myfittracker.ui.training.TrainingScreen
 
 @Composable
 fun NavGraph(navController: NavHostController) {
-    val viewModel: ExerciseViewModel = viewModel()
+    val viewModel: SeriesWithExerciseViewModel = viewModel()
     NavHost(
         navController = navController,
         startDestination = BottomNavItem.Home.navRoute
@@ -30,9 +29,7 @@ fun NavGraph(navController: NavHostController) {
         composable(BottomNavItem.Settings.navRoute) {
             SettingsScreen()
         }
-        composable("stepScreen") {
-            StepScreen(navController, viewModel)
-        }
+
     }
 }
 

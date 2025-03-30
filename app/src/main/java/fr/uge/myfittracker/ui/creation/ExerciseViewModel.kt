@@ -4,57 +4,69 @@ import Step
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import fr.uge.myfittracker.data.local.Exercise
+import fr.uge.myfittracker.data.model.Exercise
+import fr.uge.myfittracker.data.model.Series
+import fr.uge.myfittracker.data.model.SeriesWithExercise
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class ExerciseViewModel : ViewModel() {
-    private val _steps = MutableStateFlow<List<Step>>(emptyList())
-    val steps: StateFlow<List<Step>> get() = _steps.asStateFlow()
-
+class SeriesWithExerciseViewModel : ViewModel() {
     // Liste des exercices enregistrés
-    private val _exercises = MutableStateFlow<List<Exercise>>(emptyList())
-    val exercises: StateFlow<List<Exercise>> get() = _exercises.asStateFlow()
+    private val _currentExercise = MutableStateFlow<Exercise?>(null)
+    val currentExercise: StateFlow<Exercise?> = _currentExercise.asStateFlow()
 
-    // Titre et description de l'exercice
-    private val _title = MutableStateFlow("")
-    val title: StateFlow<String> get() = _title.asStateFlow()
+    // Current series being edited
+    private val _currentSeries = MutableStateFlow<Series?>(null)
+    val currentSeries: StateFlow<Series?> = _currentSeries.asStateFlow()
 
-    private val _description = MutableStateFlow("")
-    val description: StateFlow<String> get() = _description.asStateFlow()
+    // List of all SeriesWithExercise
+    private val _exerciseSeries = MutableStateFlow<List<SeriesWithExercise>>(emptyList())
+    val exerciseSeries: StateFlow<List<SeriesWithExercise>> = _exerciseSeries.asStateFlow()
 
-    // Mettre à jour le titre
-    fun updateTitle(newTitle: String) {
-        Log.i("title update",_title.value )
-        _title.value = newTitle
-        Log.i("title to add",newTitle )
+    // Set current exercise
+    fun setCurrentExercise(title: String, description: String) {
+        _currentExercise.value =  Exercise(name = title, description = description)
     }
 
-    // Mettre à jour la description
-    fun updateDescription(newDescription: String) {
-        _description.value = newDescription
+    // Set current series parameters
+    fun setCurrentSeries(repetition: Int?, duration: Int?) {
+        _currentSeries.value = Series(
+            repetition = repetition,
+            duration = duration
+        )
     }
 
-    fun addStep(step: Step) {
+    // Add a new SeriesWithExercise to the list
+    fun addSeriesWithExercise() {
         viewModelScope.launch {
-            _steps.update { it + step }
-            Log.i("test step", _steps.value.toString())
+            val currentEx = _currentExercise.value
+            val currentSer = _currentSeries.value
+
+            if (currentEx != null && currentSer != null) {
+                val newItem = SeriesWithExercise(
+                    series = currentSer,
+                    exercise = currentEx
+                )
+                _exerciseSeries.value = _exerciseSeries.value + newItem
+            }
         }
     }
 
+    // Save a new exercise
     fun saveExercise(title: String, description: String) {
         viewModelScope.launch {
-            val newExercise = Exercise(
-                title = title,
-                description = description,
-                steps = _steps.value // Utilise les étapes actuelles
+            _currentExercise.value = Exercise(
+                name = title,
+                description = description
             )
-            _exercises.update { it + newExercise }
-            _steps.update { emptyList() } // Réinitialise les étapes après enregistrement
-            Log.i("ExerciseViewModel", "Exercise saved: ${newExercise.title}")
         }
+    }
+
+    // Clear current inputs
+    fun clearCurrent() {
+        _currentExercise.value = null
+        _currentSeries.value = null
     }
 }

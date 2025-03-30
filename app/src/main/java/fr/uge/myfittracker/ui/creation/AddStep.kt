@@ -1,5 +1,5 @@
 package fr.uge.myfittracker.ui.creation
-
+/*
 import Step
 import StepType
 import android.util.Log
@@ -277,4 +277,4 @@ fun StepScreen(navController: NavController, viewModel: ExerciseViewModel) {
             )
         }
     }
-}
+}*/
