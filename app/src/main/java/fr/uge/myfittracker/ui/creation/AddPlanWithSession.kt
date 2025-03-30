@@ -1,8 +1,11 @@
 package fr.uge.myfittracker.ui.creation
 
 import Step
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -12,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -22,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import fr.uge.myfittracker.R
+import fr.uge.myfittracker.data.model.SessionType
+import fr.uge.myfittracker.data.model.SessionWithSeries
 import fr.uge.myfittracker.ui.theme.black
 import fr.uge.myfittracker.ui.theme.colorPalette
 import fr.uge.myfittracker.ui.theme.darkGrey
@@ -33,12 +39,12 @@ import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExerciseScreen(navController: NavController, viewModel: SeriesWithExerciseViewModel) {
-    var titleController by remember { mutableStateOf(TextFieldValue("")) }
-    var descriptionController by remember { mutableStateOf(TextFieldValue("")) }
-    var repititionController by remember { mutableStateOf(TextFieldValue("")) }
-    var durationController by remember { mutableStateOf(TextFieldValue("")) }
-    var isDurationVisible by remember { mutableStateOf(false) }
+fun PlanWithSessionScreen(navController: NavController, viewModel: SeriesWithExerciseViewModel) {
+    val currentPlan by viewModel.currentPlan.collectAsState()
+    var titleController by remember { mutableStateOf(TextFieldValue(currentPlan!!.name)) }
+    var descriptionController by remember { mutableStateOf(TextFieldValue(currentPlan!!.name)) }
+    val sessions by viewModel.sessionSeries.collectAsState()
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -48,7 +54,7 @@ fun ExerciseScreen(navController: NavController, viewModel: SeriesWithExerciseVi
         TopAppBar(
             title = {
                 Text(
-                    text = "Nouvel Exercice",
+                    text = "Nouveau Plan",
                     style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth() // Occupe toute la largeur
@@ -72,15 +78,10 @@ fun ExerciseScreen(navController: NavController, viewModel: SeriesWithExerciseVi
                 // Bouton à droite
                 Button(
                     onClick = {
-                        viewModel.setCurrentExercise(titleController.text, descriptionController.text)
-                        if (isDurationVisible){
-                            viewModel.setCurrentSeries(null, durationController.text.toIntOrNull())
+                        if (sessions.isNotEmpty()){
                         }
                         else{
-                            viewModel.setCurrentSeries(repititionController.text.toIntOrNull(), null)
-                        }
-                        viewModel.addSeriesWithExercise()
-                        navController.popBackStack()
+                            Toast.makeText(context, "Vous devriez ajouter au moins une serie",Toast.LENGTH_LONG ).show()}
                     },
                     modifier = Modifier.padding(4.dp), // Ajustez le padding si nécessaire
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
@@ -101,104 +102,53 @@ fun ExerciseScreen(navController: NavController, viewModel: SeriesWithExerciseVi
         )
         Text(
             style = TextStyle(fontSize = 20.sp),
-            text = "Exercice",
+            text = "Session",
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth(),
             color = Color.Black
         )
-        InputTextField(
-            value = titleController,
-            onValueChange = {titleController = it },
-            placeholder = "Titre",
-            icon = painterResource(id = android.R.drawable.ic_input_add)
-        )
-        InputTextField(
-            value = descriptionController,
-            onValueChange = { descriptionController = it },
-            placeholder = "Description",
-            icon = painterResource(id = android.R.drawable.ic_input_add)
-        )
-        Text(
+        /*Text(
             style = TextStyle(fontSize = 20.sp),
-            text = "Détails de la série",
+            text = "Series d'exercice",
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth(),
             color = Color.Black
         )
+        LazyColumn() {
+            items(series) { serie ->
+                SerieItem(serie)
+            }
+        }
         Button(
-            onClick = { isDurationVisible = !isDurationVisible },
-            modifier = Modifier.width(100.dp),
+            onClick = {
+                viewModel.setCurrentSession(selectedSessionType, repitition = repititionController.text.toInt())
+                navController.navigate("exerciseScreen")
+            },
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(8.dp),
+            shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = primary,
                 contentColor = Color.White
             )
         ) {
-            Text(if (isDurationVisible) "Durée" else "Répitition")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        if (isDurationVisible){
-            InputTextField(
-                value = durationController,
-                onValueChange = { durationController = it },
-                placeholder = "Durée",
-                icon = painterResource(id = android.R.drawable.ic_input_add),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-            )
-        }
-        else {
-            InputTextField(
-                value = repititionController,
-                onValueChange = { repititionController = it },
-                placeholder = "Répitition",
-                icon = painterResource(id = android.R.drawable.ic_input_add),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-            )
-        }
-    }
-}
-
-@Composable
-fun InputTextField(
-    value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
-    placeholder: String,
-    icon: Any,
-    keyboardOptions: KeyboardOptions  = KeyboardOptions(keyboardType = KeyboardType.Text),
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = Color.White),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        BasicTextField(
-            keyboardOptions = keyboardOptions,
-            value = value,
-            onValueChange = onValueChange,
-            modifier = Modifier
-                .weight(1f)
-                .padding(8.dp),
-            decorationBox = { innerTextField ->
-                if (value.text.isEmpty()) {
-                    Text(
-                        text = placeholder,
-                        color = darkerGrey
-                    )
-                }
-                innerTextField()
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = android.R.drawable.ic_input_add),
+                    contentDescription = "Icon",
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .size(24.dp),
+                    tint = Color.White
+                )
+                Text("Ajouter une serie", color = Color.White)
             }
-        )
-        Icon(
-            painter = icon as androidx.compose.ui.graphics.painter.Painter,
-            contentDescription = "Icon",
-            modifier = Modifier
-                .padding(8.dp)
-                .size(24.dp),
-            tint = primary
-        )
+        }*/
     }
+
 }

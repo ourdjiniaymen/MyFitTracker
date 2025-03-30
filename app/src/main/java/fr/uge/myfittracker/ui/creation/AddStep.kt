@@ -1,5 +1,5 @@
-package fr.uge.myfittracker.ui.creation
-/*
+/*package fr.uge.myfittracker.ui.creation
+
 import Step
 import StepType
 import android.util.Log

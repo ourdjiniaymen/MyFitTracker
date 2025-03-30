@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import fr.uge.myfittracker.ui.creation.ExerciseScreen
+import fr.uge.myfittracker.ui.creation.SessionWithSeriesScreen
 import fr.uge.myfittracker.ui.home.HomeScreen
 import fr.uge.myfittracker.ui.settings.SettingsScreen
 import fr.uge.myfittracker.ui.training.SeriesWithExerciseViewModel
@@ -24,12 +25,14 @@ fun NavGraph(navController: NavHostController) {
             HomeScreen()
         }
         composable(BottomNavItem.Train.navRoute) {
-            ExerciseScreen(navController, viewModel)
+            SessionWithSeriesScreen(navController, viewModel)
         }
         composable(BottomNavItem.Settings.navRoute) {
             SettingsScreen()
         }
-
+        composable("exerciseScreen") {
+            ExerciseScreen(navController, viewModel)
+        }
     }
 }
 
