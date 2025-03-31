@@ -41,8 +41,9 @@ import kotlin.random.Random
 @Composable
 fun PlanWithSessionScreen(navController: NavController, viewModel: SeriesWithExerciseViewModel) {
     val currentPlan by viewModel.currentPlan.collectAsState()
-    var titleController by remember { mutableStateOf(TextFieldValue(currentPlan!!.name)) }
-    var descriptionController by remember { mutableStateOf(TextFieldValue(currentPlan!!.name)) }
+    var titleController by remember { mutableStateOf(
+        TextFieldValue(currentPlan?.name ?: "")) }
+    var descriptionController by remember { mutableStateOf(TextFieldValue(currentPlan?.description ?: "")) }
     val sessions by viewModel.sessionSeries.collectAsState()
     val context = LocalContext.current
 
@@ -79,9 +80,11 @@ fun PlanWithSessionScreen(navController: NavController, viewModel: SeriesWithExe
                 Button(
                     onClick = {
                         if (sessions.isNotEmpty()){
+                            viewModel.setCurrentPlan(title = titleController.text, description = descriptionController.text)
+                            viewModel.addPlanWithSession()
                         }
                         else{
-                            Toast.makeText(context, "Vous devriez ajouter au moins une serie",Toast.LENGTH_LONG ).show()}
+                            Toast.makeText(context, "Vous devriez ajouter au moins une session",Toast.LENGTH_LONG ).show()}
                     },
                     modifier = Modifier.padding(4.dp), // Ajustez le padding si nécessaire
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
@@ -102,29 +105,41 @@ fun PlanWithSessionScreen(navController: NavController, viewModel: SeriesWithExe
         )
         Text(
             style = TextStyle(fontSize = 20.sp),
-            text = "Session",
+            text = "Plan",
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth(),
             color = Color.Black
         )
-        /*Text(
+        InputTextField(
+            value = titleController,
+            onValueChange = {titleController = it },
+            placeholder = "Titre",
+            icon = painterResource(id = android.R.drawable.ic_input_add)
+        )
+        InputTextField(
+            value = descriptionController,
+            onValueChange = { descriptionController = it },
+            placeholder = "Description",
+            icon = painterResource(id = android.R.drawable.ic_input_add)
+        )
+        Text(
             style = TextStyle(fontSize = 20.sp),
-            text = "Series d'exercice",
+            text = "Liste de session",
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth(),
             color = Color.Black
         )
         LazyColumn() {
-            items(series) { serie ->
-                SerieItem(serie)
+            items(sessions) { session ->
+                SerieItem(null,sessionWithSeries = session)
             }
         }
         Button(
             onClick = {
-                viewModel.setCurrentSession(selectedSessionType, repitition = repititionController.text.toInt())
-                navController.navigate("exerciseScreen")
+                viewModel.setCurrentPlan(title = titleController.text, description = descriptionController.text)
+                navController.navigate("sessionScreen")
             },
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
@@ -146,9 +161,9 @@ fun PlanWithSessionScreen(navController: NavController, viewModel: SeriesWithExe
                         .size(24.dp),
                     tint = Color.White
                 )
-                Text("Ajouter une serie", color = Color.White)
+                Text("Ajouter une session", color = Color.White)
             }
-        }*/
+        }
     }
 
 }

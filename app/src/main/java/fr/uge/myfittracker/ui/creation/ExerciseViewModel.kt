@@ -6,17 +6,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import fr.uge.myfittracker.data.model.Exercise
 import fr.uge.myfittracker.data.model.Plan
+import fr.uge.myfittracker.data.model.PlanWithSessions
 import fr.uge.myfittracker.data.model.Series
 import fr.uge.myfittracker.data.model.SeriesWithExercise
 import fr.uge.myfittracker.data.model.Session
 import fr.uge.myfittracker.data.model.SessionType
 import fr.uge.myfittracker.data.model.SessionWithSeries
+import fr.uge.myfittracker.data.repository.Repository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SeriesWithExerciseViewModel : ViewModel() {
+    private lateinit var repository: Repository
     // Liste des exercices enregistrés
     private val _currentExercise = MutableStateFlow<Exercise?>(null)
     val currentExercise: StateFlow<Exercise?> = _currentExercise.asStateFlow()
@@ -40,6 +43,17 @@ class SeriesWithExerciseViewModel : ViewModel() {
     private val _sessionSeries = MutableStateFlow<List<SessionWithSeries>>(emptyList())
     val sessionSeries: StateFlow<List<SessionWithSeries>> = _sessionSeries.asStateFlow()
 
+    //set current plan
+    fun setCurrentPlan(title: String, description: String){
+        if (_currentPlan.value == null){
+            _currentPlan.value = Plan(name = title, description = description)
+        }
+        else{
+            _currentPlan.value = _currentPlan.value!!.copy(name = title, description = description)
+        }
+    }
+
+    //set current session
     fun setCurrentSession(sessionType: SessionType, repitition:Int){
         if (_currentSession.value == null){
             _currentSession.value = Session(type = sessionType, repetition = repitition)
@@ -72,7 +86,7 @@ class SeriesWithExerciseViewModel : ViewModel() {
                     exercise = currentEx
                 )
                 _exerciseSeries.value = _exerciseSeries.value + newItem
-                clearCurrentSerie()
+                _clearCurrentSerie()
             }
         }
     }
@@ -88,19 +102,33 @@ class SeriesWithExerciseViewModel : ViewModel() {
                 )
                 _sessionSeries.value = _sessionSeries.value + newItem
             }
-            clearCurrentSession()
+            _clearCurrentSession()
         }
     }
 
 
+    // Add a new PlanWithSession to the list
+    fun addPlanWithSession() {
+        viewModelScope.launch {
+            val currentP = _currentPlan.value
+            if (_sessionSeries.value.isNotEmpty() && currentP != null) {
+                val newItem = PlanWithSessions(
+                    plan = currentP,
+                    sessions = _sessionSeries.value,
+                )
+                repository.insertPlanWithSessions(newItem)
+            }
+            _sessionSeries.value = emptyList()
+        }
+    }
 
     // Clear current inputs
-    fun clearCurrentSerie() {
+    fun _clearCurrentSerie() {
         _currentExercise.value = null
         _currentSeries.value = null
     }
     // Clear current inputs
-    fun clearCurrentSession() {
+    fun _clearCurrentSession() {
         _currentSession.value = null
         _exerciseSeries.value = emptyList()
     }

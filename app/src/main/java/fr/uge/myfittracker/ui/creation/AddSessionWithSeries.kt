@@ -45,7 +45,12 @@ fun SessionWithSeriesScreen(navController: NavController, viewModel: SeriesWithE
     var selectedSessionType by remember {
         mutableStateOf(currentSession?.type ?: SessionType.FULL_BODY)
     }
-    var repititionController by remember { mutableStateOf(TextFieldValue(currentSession?.repetition.toString()?:"")) }
+    var defaultRepitition = if (currentSession != null){
+        currentSession?.repetition.toString()
+    }else{
+        ""
+    }
+    var repititionController by remember { mutableStateOf(TextFieldValue(defaultRepitition)) }
     val series by viewModel.exerciseSeries.collectAsState()
     val context = LocalContext.current
 
@@ -184,7 +189,7 @@ fun SessionWithSeriesScreen(navController: NavController, viewModel: SeriesWithE
         )
         LazyColumn() {
             items(series) { serie ->
-                SerieItem(serie)
+                SerieItem(seriesWithExercise = serie, null)
             }
         }
         Button(

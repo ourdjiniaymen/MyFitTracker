@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.uge.myfittracker.R
 import fr.uge.myfittracker.data.model.SeriesWithExercise
+import fr.uge.myfittracker.data.model.SessionWithSeries
 import fr.uge.myfittracker.ui.theme.black
 import fr.uge.myfittracker.ui.theme.colorPalette
 import fr.uge.myfittracker.ui.theme.darkGrey
@@ -35,7 +36,7 @@ import kotlin.random.Random
 
 
 @Composable
-fun SerieItem(seriesWithExercise: SeriesWithExercise) {
+fun SerieItem(seriesWithExercise: SeriesWithExercise?, sessionWithSeries: SessionWithSeries?) {
     val randomColor = colorPalette[Random.nextInt(0, colorPalette.size)]
     Row(
         modifier = Modifier
@@ -59,28 +60,51 @@ fun SerieItem(seriesWithExercise: SeriesWithExercise) {
                 .padding(8.dp)
                 .weight(1f)
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start){
+            if (seriesWithExercise!= null){
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start){
+                    Text(
+                        text = seriesWithExercise.exercise.name,
+                        style = TextStyle(fontSize = 20.sp,  fontWeight = FontWeight.Bold),
+                        color = darkGrey
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        if(seriesWithExercise.series.duration!= null){
+                            "${seriesWithExercise.series.duration} secondes"
+                        }else{
+                            "X ${seriesWithExercise.series.repetition}"
+                        },
+                        style = TextStyle(fontSize = 16.sp),
+                        color = darkGrey
+                    )
+                }
                 Text(
-                    text = seriesWithExercise.exercise.name,
-                    style = TextStyle(fontSize = 20.sp,  fontWeight = FontWeight.Bold),
-                    color = darkGrey
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    if(seriesWithExercise.series.duration!= null){
-                        "${seriesWithExercise.series.duration} secondes"
-                    }else{
-                        "X ${seriesWithExercise.series.repetition}"
-                    },
+                    text = seriesWithExercise.exercise.description!!,
                     style = TextStyle(fontSize = 16.sp),
-                    color = darkGrey
+                    color = black
                 )
             }
-            Text(
-                text = seriesWithExercise.exercise.description!!,
-                style = TextStyle(fontSize = 16.sp),
-                color = black
-            )
+            if (sessionWithSeries != null){
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start){
+                    Text(
+                        text = sessionWithSeries.session.type.name,
+                        style = TextStyle(fontSize = 20.sp,  fontWeight = FontWeight.Bold),
+                        color = darkGrey
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        "X ${sessionWithSeries.session.repetition}",
+                        style = TextStyle(fontSize = 16.sp),
+                        color = darkGrey
+                    )
+                }
+                Text(
+                    text = "${sessionWithSeries.series.size} series",
+                    style = TextStyle(fontSize = 16.sp),
+                    color = black
+                )
+            }
+
         }
         Icon(
             painter = painterResource(id = R.drawable.right_icon), // Icône flèche vers le bas
