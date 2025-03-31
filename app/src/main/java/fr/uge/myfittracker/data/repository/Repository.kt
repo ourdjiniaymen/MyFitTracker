@@ -63,6 +63,5 @@ class Repository(
                 exerciseId = exerciseId, sessionId = sessionId
             )
         );
-
     }
 }

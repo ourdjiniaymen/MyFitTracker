@@ -5,6 +5,7 @@ plugins {
    // id("kotlin-ksp")
     id("com.google.devtools.ksp")
     alias(libs.plugins.compose.compiler)
+    id("kotlin-parcelize")
 
 
 }

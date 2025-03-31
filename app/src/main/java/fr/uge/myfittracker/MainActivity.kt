@@ -24,23 +24,12 @@ import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        val database by lazy { AppDatabase.getDatabase(this) }
-        val planDao by lazy { database.planDao() }
-
         super.onCreate(savedInstanceState)
         setContent {
             MyFitTrackerTheme(darkTheme = false) {
                 MainScreen()
             }
         }
-        /*lifecycleScope.launch(Dispatchers.IO) {
-            val plan = Plan(id = 1, name = "Test Plan")
-            planDao.insertPlan(plan) // Insert a test plan
-            val allPlans = planDao.getAllPlans() // Fetch all plans
-
-            Log.d("DatabaseTest", "Retrieved Plans: $allPlans")
-        }*/
-
     }
 }
 
