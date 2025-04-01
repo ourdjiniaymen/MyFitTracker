@@ -1,13 +1,11 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-   // id("com.google.devtools.ksp")
-   // id("kotlin-ksp")
     id("com.google.devtools.ksp")
+    id("kotlin-ksp")
     alias(libs.plugins.compose.compiler)
     id("kotlin-parcelize")
-
-
+    //id("kotlin-kapt")
 }
 
 android {
@@ -57,9 +55,6 @@ android {
 }
 
 dependencies {
-    implementation(libs.annotations)
-    implementation(libs.androidx.junit.ktx)
-    testImplementation(libs.androidx.core)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -71,6 +66,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.room.common)
+    implementation(libs.androidx.room.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -78,18 +75,4 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation(libs.androidx.room.runtime){
-        exclude(group = "com.intellij", module = "annotations")
-    }
-    implementation(libs.androidx.room.compiler){
-        exclude(group = "com.intellij", module = "annotations")
-    }
-    ksp(libs.androidx.room.compiler){
-        exclude(group = "com.intellij", module = "annotations")
-    }
-    implementation(libs.androidx.room.ktx){
-        exclude(group = "com.intellij", module = "annotations")
-    }
-    testImplementation(libs.kotlinx.coroutines.test)
-    androidTestImplementation(libs.kotlinx.coroutines.test)
 }

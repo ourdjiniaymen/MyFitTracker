@@ -10,17 +10,20 @@ import fr.uge.myfittracker.data.local.dao.ExerciseDao
 import fr.uge.myfittracker.data.local.dao.PlanDao
 import fr.uge.myfittracker.data.local.dao.SeriesDao
 import fr.uge.myfittracker.data.local.dao.SessionDao
+import fr.uge.myfittracker.data.local.database.DailyPerformanceDao
+import fr.uge.myfittracker.data.local.model.DailyPerformance
 import fr.uge.myfittracker.data.model.Exercise
 import fr.uge.myfittracker.data.model.Plan
 import fr.uge.myfittracker.data.model.Series
 import fr.uge.myfittracker.data.model.Session
 
 @Database(
-    entities = [Exercise::class, Series::class, Session::class, Plan::class],
+    entities = [Exercise::class, Series::class, Session::class, Plan::class, DailyPerformance::class],
     version = 6
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
+    abstract fun dailyPerformanceDao(): DailyPerformanceDao
     abstract fun exerciseDao(): ExerciseDao
     abstract fun seriesDao(): SeriesDao
     abstract fun sessionDao(): SessionDao
