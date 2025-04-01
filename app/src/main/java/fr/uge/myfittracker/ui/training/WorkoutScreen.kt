@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
@@ -34,6 +35,7 @@ import fr.uge.myfittracker.data.model.Session
 import fr.uge.myfittracker.data.model.SessionStat
 import fr.uge.myfittracker.data.model.SessionType
 import fr.uge.myfittracker.data.model.SessionWithSeries
+import fr.uge.myfittracker.ui.theme.primary
 import fr.uge.myfittracker.ui.theme.secondary
 import fr.uge.myfittracker.ui.theme.textPrimary
 import fr.uge.myfittracker.ui.theme.textSecondary
@@ -47,6 +49,8 @@ fun WorkoutScreen(navController: NavHostController, trainingPlanViewModel: Train
    /* val sessionWithSeries = SessionWithSeries(
         session = Session(
             type = SessionType.FULL_BODY,
+
+
             repetition = 1
         ),
         series = listOf(
@@ -114,7 +118,9 @@ fun WorkoutScreen(navController: NavHostController, trainingPlanViewModel: Train
                     currentSeriesIndex++
                 }
             },
-            onExit = {},
+            onExit = {
+                navController.navigate("Plan")
+            },
             onFinished = {
                 listSeriesStat.add(
                     SeriesStat(
@@ -122,7 +128,6 @@ fun WorkoutScreen(navController: NavHostController, trainingPlanViewModel: Train
                         achievedScore = if (isTimeBased) currentSeries.series.duration
                             ?: 0 else currentSeries.series.repetition ?: 0,
                         isCompleted = true
-
                     )
                 )
                 if (currentSeriesIndex == sessionWithSeries.series.size - 1) {
@@ -241,7 +246,13 @@ fun SeriesExecutionScreen(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 if (isTimeBased)
-                    Button(onClick = { timerRunning = !timerRunning }) {
+                    Button(
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = primary,
+                            contentColor = White
+                        ),
+                        onClick = { timerRunning = !timerRunning },
+                        ) {
                         Icon(
                             painterResource(if (timerRunning) R.drawable.ic_pause else R.drawable.ic_play),
                             "Run/Pause",
@@ -249,7 +260,12 @@ fun SeriesExecutionScreen(
                         )
                     }
                 if (isTimeBased)
-                    Button(onClick = {
+                    Button(
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = primary,
+                            contentColor = White
+                        ),
+                        onClick = {
                         timerRunning = false
                         dialogTitle = "Restart $exerciseName"
                         dialogDescription = "Êtes-vous sûr de vouloir relancer l'exercice ?"
@@ -264,7 +280,12 @@ fun SeriesExecutionScreen(
                     }) {
                         Icon(painterResource(R.drawable.ic_restart), "Restart", tint = White)
                     }
-                Button(onClick = {
+                Button(
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = primary,
+                        contentColor = White
+                    ),
+                    onClick = {
                     if (isTimeBased) {
                         timerRunning = false
                         dialogTitle = "Sauter $exerciseName"
@@ -303,6 +324,10 @@ fun SeriesExecutionScreen(
 
             if (previousExerciseName != null)
                 Button(
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = primary,
+                        contentColor = White
+                    ),
                     shape = ShapeDefaults.Small,
                     onClick = {
                         timerRunning = false
@@ -326,6 +351,10 @@ fun SeriesExecutionScreen(
                 Spacer(Modifier.width(50.dp))
 
             Button(
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = primary,
+                    contentColor = White
+                ),
                 shape = ShapeDefaults.Small,
                 onClick = {
                     timerRunning = false
@@ -412,12 +441,22 @@ fun ConfirmationDialog(
             title = { Text(text = title, color = textPrimary) },
             text = { Text(description, color = textSecondary) },
             confirmButton = {
-                Button(onClick = { onConfirm(); onDismiss() }) {
+                Button(
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = primary,
+                        contentColor = White
+                    ),
+                    onClick = { onConfirm(); onDismiss() }) {
                     Text("Ok", color = White)
                 }
             },
             dismissButton = {
-                Button(onClick = { onDismiss() }) {
+                Button(
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = primary,
+                        contentColor = White
+                    ),
+                    onClick = { onDismiss() }) {
                     Text("Annuler", color = White)
                 }
             },
@@ -458,12 +497,22 @@ fun AchievedRepetitionDialog(
                 }
             },
             confirmButton = {
-                Button(onClick = { onConfirm(selectedValue); onDismiss() }) {
+                Button(
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = primary,
+                        contentColor = White
+                    ),
+                    onClick = { onConfirm(selectedValue); onDismiss() }) {
                     Text("Ok", color = White)
                 }
             },
             dismissButton = {
-                Button(onClick = { onDismiss() }) {
+                Button(
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = primary,
+                        contentColor = White
+                    ),
+                    onClick = { onDismiss() }) {
                     Text("Annuler", color = White)
                 }
             },

@@ -56,14 +56,14 @@ import fr.uge.myfittracker.ui.theme.darkGrey
 import fr.uge.myfittracker.ui.theme.darkerGrey
 import fr.uge.myfittracker.ui.theme.primary
 import fr.uge.myfittracker.ui.training.viewmodel.TrainingPlanViewModel
+import fr.uge.myfittracker.utils.Constants
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun TrainingPlan(navController: NavController, planId:Long,  trainingPlanViewModel: TrainingPlanViewModel){
+fun TrainingPlan(navController: NavController, trainingPlanViewModel: TrainingPlanViewModel){
     val planDetails by trainingPlanViewModel.currentPlan.collectAsState()
     val listSessions = remember { mutableStateListOf<SessionWithSeries>() }
-
 
 
     LaunchedEffect(Unit) {
@@ -78,7 +78,7 @@ fun TrainingPlan(navController: NavController, planId:Long,  trainingPlanViewMod
             planDetails == null -> {}
 
             else -> {
-                TopBarTrainingPlan(modifier = Modifier, planDetails!!.plan.name, planId, trainingPlanViewModel, navController)
+                TopBarTrainingPlan(modifier = Modifier, planDetails!!.plan.name, navController)
             }
         }
 
@@ -129,7 +129,7 @@ fun TrainingPlan(navController: NavController, planId:Long,  trainingPlanViewMod
 }
 
 @Composable
-fun TopBarTrainingPlan(modifier: Modifier, title:String, planId: Long, trainingPlanViewModel: TrainingPlanViewModel, navController: NavController){
+fun TopBarTrainingPlan(modifier: Modifier, title:String, navController: NavController){
     var expanded by remember { mutableStateOf(false) }
     Box(
         modifier
@@ -179,7 +179,7 @@ fun Session(title: String, session:SessionWithSeries, navController: NavControll
             .clip(RoundedCornerShape(8.dp))
             .clickable {
                 trainingPlanViewModel.setCurrentSession(session)
-                navController.navigate("session")
+                navController.navigate(Constants.WORKOUT_SCREEN_ROUTE)
             }){
         Row(
             Modifier
@@ -206,7 +206,7 @@ fun Session(title: String, session:SessionWithSeries, navController: NavControll
                    tint = darkerGrey,
                    modifier = Modifier.clickable {
                        trainingPlanViewModel.setCurrentSession(session)
-                       navController.navigate("session") }
+                       navController.navigate(Constants.WORKOUT_SCREEN_ROUTE) }
 
                )
            }

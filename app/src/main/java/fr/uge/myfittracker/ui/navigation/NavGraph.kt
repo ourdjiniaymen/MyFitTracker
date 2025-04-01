@@ -52,7 +52,7 @@ fun NavGraph(navController: NavHostController) {
             TrainingPlanListScreen(navController, trainingViewModel)
         }
         composable("Plan") {
-                TrainingPlan(Modifier, navController)
+                TrainingPlan(navController, trainingViewModel)
         }
         composable("History") {
             HistoryScreen(navController, trainingViewModel)
