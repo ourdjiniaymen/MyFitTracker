@@ -8,6 +8,7 @@ import fr.uge.myfittracker.data.local.dao.PlanDao
 import fr.uge.myfittracker.data.local.dao.SeriesDao
 import fr.uge.myfittracker.data.local.dao.SessionDao
 import fr.uge.myfittracker.data.model.Exercise
+import fr.uge.myfittracker.data.model.Plan
 import fr.uge.myfittracker.data.model.PlanWithSessions
 import fr.uge.myfittracker.data.model.SeriesWithExercise
 import fr.uge.myfittracker.data.model.Session
@@ -33,6 +34,9 @@ class Repository(
     suspend fun getAllPlans(): List<PlanWithSessions> {
         return planDao.getAllPlans()
     }
+    suspend fun getAllPlansWithoutSessions(): List<Plan> {
+            return planDao.getAllPlansWithoutSessions()
+        }
 
     suspend fun getPlanSessions(planId: Long): List<SessionWithSeries> {
         return sessionDao.getSessionFromPlanId(planId);

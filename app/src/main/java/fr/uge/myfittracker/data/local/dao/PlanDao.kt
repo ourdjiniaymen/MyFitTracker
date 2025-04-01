@@ -12,6 +12,25 @@ interface PlanDao {
     suspend fun insertPlan(plan: Plan): Long
 
 
+
     @Query("SELECT * FROM plan")
     suspend fun getAllPlans(): List<PlanWithSessions>
+
+    @Query("SELECT * FROM plan")
+    suspend fun getAllPlansWithoutSessions(): List<Plan>
+
+
+    @Query("SELECT * FROM plan WHERE id = :planId")
+    suspend fun getPlanById(planId:Long):Plan
+
+    @Query("DELETE FROM plan")
+    suspend fun deleteAllPlans()
+
+    @Query("DELETE FROM plan WHERE id=:planId")
+    fun deletePlanById(planId: Long)
+
+    @Query("DELETE FROM sqlite_sequence WHERE name = 'plan'")
+    suspend fun resetPlanIdSequence()
+
+
 }

@@ -9,5 +9,7 @@ data class Plan(
     @ColumnInfo(name="id")
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name : String,
-    val description : String?
+    val description : String?,
+    val date : String,
+    val started : Boolean
 )
