@@ -44,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import fr.uge.myfittracker.data.model.Exercise
 import fr.uge.myfittracker.data.model.Plan
@@ -55,16 +56,17 @@ import fr.uge.myfittracker.ui.theme.darkGrey
 import fr.uge.myfittracker.ui.theme.darkerGrey
 import fr.uge.myfittracker.ui.theme.primary
 import fr.uge.myfittracker.ui.training.viewmodel.TrainingPlanViewModel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun TrainingPlan(navController: NavController, planId:Long, trainingPlanViewModel: TrainingPlanViewModel){
+fun TrainingPlan(navController: NavController, planId:Long,  trainingPlanViewModel: TrainingPlanViewModel){
     var listExercices = remember { mutableStateListOf<Exercise>() }
     val planDetails by trainingPlanViewModel.getPlanById(planId).collectAsState(initial = null)
     val listSessions = remember { mutableStateListOf<SessionWithSeries>() }
     val sessionx = Session(planId = 1, type = SessionType.STRENGTH, repetition = 1)
 
-    val coroutineScope = rememberCoroutineScope()
+
 
     LaunchedEffect(Unit) {
         val exercises = trainingPlanViewModel.getListExercises(planId)
@@ -82,7 +84,7 @@ fun TrainingPlan(navController: NavController, planId:Long, trainingPlanViewMode
             planDetails == null -> {}
 
             else -> {
-                TopBarTrainingPlan(modifier = Modifier, planDetails!!.name,planDetails!!.id, trainingPlanViewModel, navController)
+                TopBarTrainingPlan(modifier = Modifier, planDetails!!.name, planId, trainingPlanViewModel, navController)
             }
         }
 
@@ -133,8 +135,9 @@ fun TrainingPlan(navController: NavController, planId:Long, trainingPlanViewMode
 }
 
 @Composable
-fun TopBarTrainingPlan(modifier: Modifier, title:String, planId:Long, trainingPlanViewModel: TrainingPlanViewModel, navController: NavController){
+fun TopBarTrainingPlan(modifier: Modifier, title:String, planId: Long, trainingPlanViewModel: TrainingPlanViewModel, navController: NavController){
     var expanded by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
     Box(
         modifier
             .fillMaxWidth()
@@ -147,7 +150,6 @@ fun TopBarTrainingPlan(modifier: Modifier, title:String, planId:Long, trainingPl
                 tint = Color.Black,
                 modifier = Modifier.clickable { navController.popBackStack() }
             )
-            //Spacer(modifier.width(130.dp))
             Text(text="${title}",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold)
@@ -158,7 +160,9 @@ fun TopBarTrainingPlan(modifier: Modifier, title:String, planId:Long, trainingPl
                DropdownMenu(
                    expanded = expanded,
                    onDismissRequest = { expanded = false },
-                   modifier = Modifier.background(color = Color.White).align(Alignment.TopEnd)
+                   modifier = Modifier
+                       .background(color = Color.White)
+                       .align(Alignment.TopEnd)
                ) {
                    DropdownMenuItem(
                        text = { Text("Edit") },
@@ -166,7 +170,7 @@ fun TopBarTrainingPlan(modifier: Modifier, title:String, planId:Long, trainingPl
                    )
                    DropdownMenuItem(
                        text = { Text("Delete", color = Color.Red) },
-                       onClick = {  /**/}
+                       onClick = {/*Delete*/}
                    )
                }
            }
@@ -177,9 +181,13 @@ fun TopBarTrainingPlan(modifier: Modifier, title:String, planId:Long, trainingPl
 
 @Composable
 fun Session(title: String, session:SessionWithSeries, navController: NavController, trainingPlanViewModel: TrainingPlanViewModel){
-    Box(Modifier.clip(RoundedCornerShape(8.dp)).clickable {
-        trainingPlanViewModel.setCurrentSession(session)
-        navController.navigate("session") }){
+    Box(
+        Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .clickable {
+                trainingPlanViewModel.setCurrentSession(session)
+                navController.navigate("session")
+            }){
         Row(
             Modifier
                 .fillMaxWidth()
