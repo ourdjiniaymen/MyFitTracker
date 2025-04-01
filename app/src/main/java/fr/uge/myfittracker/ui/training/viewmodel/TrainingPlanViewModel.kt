@@ -39,11 +39,13 @@ class TrainingPlanViewModel (application:Application):AndroidViewModel(applicati
     private val _sessions = MutableStateFlow<List<SessionWithSeries>>(emptyList())
     private val _exercises = MutableStateFlow<List<Exercise>>(emptyList())
     private val _currentSession = MutableStateFlow<SessionWithSeries?>(null)
+    private val _currentPlan = MutableStateFlow<Plan?>(null)
     var selectedDate: Long? = null
     val plans: StateFlow<List<Plan>> = _plans.asStateFlow()
     val sessions: StateFlow<List<SessionWithSeries>> = _sessions.asStateFlow()
     val exercises: StateFlow<List<Exercise>> = _exercises.asStateFlow()
     var currentSession : StateFlow<SessionWithSeries?> = _currentSession.asStateFlow()
+    var currentPlan : StateFlow<Plan?> = _currentPlan.asStateFlow()
 
     init {
         fetchPlans()
@@ -51,6 +53,10 @@ class TrainingPlanViewModel (application:Application):AndroidViewModel(applicati
 
     fun setCurrentSession(session:SessionWithSeries){
         _currentSession.value = session
+    }
+
+    fun setCurrentPlan(plan:Plan){
+        _currentPlan.value = plan
     }
 
     suspend fun getListPlans(): List<Plan> {
@@ -86,7 +92,6 @@ class TrainingPlanViewModel (application:Application):AndroidViewModel(applicati
         viewModelScope.launch {
             val exoId = insertExercise(exercise)
             fetchExercises(sessionId)
-            Log.d("exo id", exoId.toString())
         }
     }
     fun addNewPlan(plan: Plan) {
@@ -132,9 +137,14 @@ class TrainingPlanViewModel (application:Application):AndroidViewModel(applicati
     suspend fun insertSeries(series: Series){
         seriesDao.insertSeries(series)
     }
+
     fun deletePlan(planId: Long){
-        planDao.deletePlanById(planId)
+        viewModelScope.launch {
+            planDao.deletePlanById(planId)
+            fetchPlans()
+        }
     }
+
     suspend fun deleteAllPlans(){
         viewModelScope.launch {
             planDao.deleteAllPlans()
