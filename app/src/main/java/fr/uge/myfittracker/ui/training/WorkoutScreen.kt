@@ -7,6 +7,7 @@ import fr.uge.myfittracker.data.model.SeriesWithExercise
 
 import android.os.CountDownTimer
 import android.util.Log
+import android.widget.NumberPicker
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
@@ -23,8 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.DialogProperties
-import androidx.core.os.bundleOf
 import androidx.navigation.NavHostController
 import fr.uge.myfittracker.R
 import fr.uge.myfittracker.data.model.Exercise
@@ -151,10 +152,13 @@ fun SeriesExecutionScreen(
     var repsDone by remember { mutableIntStateOf(0) }
     var timerRunning by remember { mutableStateOf(false) }
     var timer: CountDownTimer? by remember { mutableStateOf(null) }
-    var showDialog by remember { mutableStateOf(false) }
+    var showConfirmationDialog by remember { mutableStateOf(false) }
     var dialogTitle by remember { mutableStateOf("") }
     var dialogDescription by remember { mutableStateOf("") }
     var onDialogConfirm by remember { mutableStateOf<() -> Unit>({ }) }
+    var showAchievedCountDialog by remember { mutableStateOf(false) }
+    var onAchievedScoreDialogConfirm by remember { mutableStateOf<(Int) -> Unit>({ }) }
+    var maxRepetition by remember { mutableIntStateOf(0) }
 
     val animatedProgress by animateFloatAsState(
         targetValue = if (isTimeBased) elapsedTime.toFloat() / (duration ?: 1) else 1f,
@@ -171,13 +175,16 @@ fun SeriesExecutionScreen(
                 }
 
                 override fun onFinish() {
-
+                    elapsedTime = 0
+                    remainingTime = duration ?: 0
+                    timerRunning = false
                     dialogTitle = "$exerciseName est terminé"
                     dialogDescription = "Je veux passer à l'étape suivante"
                     onDialogConfirm = {
-                      onFinished()
+                        onFinished()
                     }
-                    showDialog = true }
+                    showConfirmationDialog = true
+                }
             }.start()
         } else {
             timer?.cancel()
@@ -194,9 +201,15 @@ fun SeriesExecutionScreen(
         ConfirmationDialog(
             title = dialogTitle,
             description = dialogDescription,
-            showDialog = showDialog,
-            onDismiss = { showDialog = false },
+            showDialog = showConfirmationDialog,
+            onDismiss = { showConfirmationDialog = false },
             onConfirm = onDialogConfirm
+        )
+        AchievedRepetitionDialog(
+            showDialog = showAchievedCountDialog,
+            maxRepetition = maxRepetition,
+            onDismiss = { showAchievedCountDialog = false },
+            onConfirm = onAchievedScoreDialogConfirm
         )
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
@@ -233,8 +246,6 @@ fun SeriesExecutionScreen(
                             tint = White
                         )
                     }
-
-
                 if (isTimeBased)
                     Button(onClick = {
                         timerRunning = false
@@ -247,20 +258,28 @@ fun SeriesExecutionScreen(
                             timerRunning = false
                         }
                         if (elapsedTime > 0)
-                            showDialog = true
-
-
+                            showConfirmationDialog = true
                     }) {
                         Icon(painterResource(R.drawable.ic_restart), "Restart", tint = White)
                     }
                 Button(onClick = {
-                    timerRunning = false
-                    dialogTitle = "Sauter $exerciseName"
-                    dialogDescription = "Êtes-vous sûr de vouloir sauter l'exercice ?"
-                    onDialogConfirm = {
-                        onSkip(elapsedTime)
+                    if (isTimeBased) {
+                        timerRunning = false
+                        dialogTitle = "Sauter $exerciseName"
+                        dialogDescription = "Êtes-vous sûr de vouloir sauter l'exercice ?"
+                        onDialogConfirm = {
+                            remainingTime = duration ?: 0
+                            elapsedTime = 0
+                            onSkip(elapsedTime)
+                        }
+                        showConfirmationDialog = true
+                    } else {
+                        showAchievedCountDialog = true
+                        maxRepetition = repetitions!!
+                        onAchievedScoreDialogConfirm = { score ->
+                            onSkip(score)
+                        }
                     }
-                    showDialog = true
                 }) {
                     Icon(painterResource(R.drawable.ic_skip), "Skip", tint = White)
                 }
@@ -289,7 +308,7 @@ fun SeriesExecutionScreen(
                         dialogDescription =
                             "Êtes-vous sûr de vouloir refaire l'exercice précédent ?"
                         onDialogConfirm = onPrevious
-                        showDialog = true
+                        showConfirmationDialog = true
                     },
                     modifier = Modifier.weight(1f)
                 ) {
@@ -311,7 +330,7 @@ fun SeriesExecutionScreen(
                     dialogTitle = "Abandonner $exerciseName"
                     dialogDescription = "Êtes-vous sûr de vouloir abandonner la session ?"
                     onDialogConfirm = onExit
-                    showDialog = true
+                    showConfirmationDialog = true
                 },
                 modifier = Modifier.weight(1f)
             ) {
@@ -392,6 +411,52 @@ fun ConfirmationDialog(
             text = { Text(description, color = textSecondary) },
             confirmButton = {
                 Button(onClick = { onConfirm(); onDismiss() }) {
+                    Text("Ok", color = White)
+                }
+            },
+            dismissButton = {
+                Button(onClick = { onDismiss() }) {
+                    Text("Annuler", color = White)
+                }
+            },
+            properties = DialogProperties(dismissOnClickOutside = false),
+            containerColor = White
+        )
+    }
+}
+
+@Composable
+fun AchievedRepetitionDialog(
+    showDialog: Boolean,
+    maxRepetition: Int,
+    onDismiss: () -> Unit,
+    onConfirm: (Int) -> Unit
+) {
+    var selectedValue by remember { mutableIntStateOf(0) }
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { onDismiss() },
+            title = { Text(text = "Ja' atteint $selectedValue répétition", color = textPrimary) },
+            text = {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AndroidView(
+                        factory = { context ->
+                            NumberPicker(context).apply {
+                                minValue = 0
+                                maxValue = maxRepetition
+                                setOnValueChangedListener { _, _, newVal ->
+                                    selectedValue = newVal
+                                }
+                            }
+                        }
+                    )
+                }
+            },
+            confirmButton = {
+                Button(onClick = { onConfirm(selectedValue); onDismiss() }) {
                     Text("Ok", color = White)
                 }
             },
