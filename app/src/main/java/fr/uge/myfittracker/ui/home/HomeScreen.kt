@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import fr.uge.myfittracker.ui.home.viewmodel.HomeViewModel
 import fr.uge.myfittracker.ui.home.viewmodel.StepCounterViewModel
 import fr.uge.myfittracker.ui.theme.*
@@ -60,10 +61,13 @@ import kotlinx.coroutines.delay
 import java.util.*
 import java.text.SimpleDateFormat
 
+
 @Composable
 fun HomeScreen(
-    homeViewModel: HomeViewModel = viewModel()
+    homeViewModel: HomeViewModel = viewModel(),
+    navController: NavController
 ) {
+
 
     val dailyStepsGoal by homeViewModel.dailyStepsGoal.collectAsState()
 
@@ -83,6 +87,7 @@ fun HomeScreen(
     var dialogTitle by remember { mutableStateOf("") }
     var dialogText by remember { mutableStateOf("") }
 
+
     LaunchedEffect(Unit) {
         while (true) {
             delay(1000L) //1 seconde
@@ -97,7 +102,7 @@ fun HomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         //TopBar(totalStars)
-        TopBar(dailyStars)
+        TopBar(dailyStars, navController)
         CurrentDateTime(currentTime.value,currentDate.value)
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
@@ -224,7 +229,59 @@ fun CurrentDateTime(
 }
 
 @Composable
-fun TopBar(stars: Int){
+fun TopBar(stars: Int, navController: NavController){
+    var showStatistique by remember { mutableStateOf(false) }
+    if (showStatistique) {
+        Row (
+            modifier = Modifier
+                .fillMaxWidth()
+                //.background(color = if (darkTheme) Color.Black else Color.White),
+                .background(color = Color.White)
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Text(
+                text = "MyFitTracker",
+                color = primary,
+                fontStyle = FontStyle.Italic,
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Row (
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Box (
+                    modifier = Modifier
+                        .clip(shape = RoundedCornerShape(12.dp))
+                        .background(color = secondary.copy(alpha = 0.2f))
+                        .padding(horizontal = 16.dp)
+                ){
+                    Text("$stars ★", color = secondary, fontWeight = FontWeight.Bold)
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+
+                IconButton(
+                    onClick =
+                    { //showStatistique = true
+                        navController.navigate("PROFILE")
+                         }
+
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Profile Icon",
+                        tint = Color.Black
+                    )
+                }
+
+
+            }
+
+        }
+        StatistiqueScreen()
+    } else {
     Row (
         modifier = Modifier
             .fillMaxWidth()
@@ -254,10 +311,11 @@ fun TopBar(stars: Int){
                 Text("$stars ★", color = secondary, fontWeight = FontWeight.Bold)
             }
             Spacer(modifier = Modifier.width(8.dp))
+
             IconButton(
-                onClick = {
-                    //TODO : goto the profile page
-                }
+                onClick =
+                    { showStatistique = true }
+
             ) {
                 Icon(
                     imageVector = Icons.Default.Person,
@@ -265,10 +323,10 @@ fun TopBar(stars: Int){
                     tint = Color.Black
                 )
             }
-
         }
 
     }
+        }
 }
 
 @Composable

@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import fr.uge.myfittracker.ui.home.HomeScreen
+import fr.uge.myfittracker.ui.home.StatistiqueScreen
 import fr.uge.myfittracker.ui.home.viewmodel.HomeViewModel
 import fr.uge.myfittracker.ui.home.viewmodel.StepCounterViewModel
 import fr.uge.myfittracker.ui.settings.SettingsScreen
@@ -26,13 +27,16 @@ fun NavGraph(navController: NavHostController) {
     ) {
         composable(BottomNavItem.Home.navRoute) {
             //HomeScreen(HomeViewModel())
-            HomeScreen(homeViewModel)
+            HomeScreen(homeViewModel, navController)
         }
         composable(BottomNavItem.Train.navRoute) {
             TrainingScreen()
         }
         composable(BottomNavItem.Settings.navRoute) {
             SettingsScreen()
+        }
+        composable("PROFILE") {
+           StatistiqueScreen()
         }
     }
 }
