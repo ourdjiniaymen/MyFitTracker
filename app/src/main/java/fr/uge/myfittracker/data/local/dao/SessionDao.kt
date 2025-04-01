@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import fr.uge.myfittracker.data.model.Plan
 import fr.uge.myfittracker.data.model.Session
 import fr.uge.myfittracker.data.model.SessionWithSeries
 
@@ -17,4 +18,7 @@ interface SessionDao {
          "SELECT * FROM session WHERE plan_id=:planId"
      )
      suspend fun getSessionFromPlanId(planId: Long): List<SessionWithSeries>
+
+     @Query("SELECT * FROM session WHERE id = :sessionId")
+     suspend fun getSessionById(sessionId:Long): Session
 }
