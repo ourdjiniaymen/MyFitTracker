@@ -53,31 +53,21 @@ import fr.uge.myfittracker.ui.training.viewmodel.TrainingPlanViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-
-data class ListItem(val title: String, val date:String, val started: Boolean)
 @Composable
 fun TrainingPlanListScreen(navController: NavController, trainingPlanListModel:TrainingPlanViewModel = viewModel()){
 
     val listPlans by trainingPlanListModel.plans.collectAsState()
-
-    val coroutineScope = rememberCoroutineScope()
-    val planx = Plan(name = "plan1", date = "01/03/2025", started = true, description = "test desc")
     Column(
         modifier = Modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        TopBarPlan(Modifier, addNewPlan = {
-           coroutineScope.launch {
-               trainingPlanListModel.addNewPlan(planx)
-               }
-
-        }, navController = navController)
+        TopBarPlan(Modifier, navController = navController)
         Spacer(Modifier.height(20.dp))
         LazyColumn {
             items(listPlans.size){
                 index->
-                Plan(Modifier,index+1, listPlans[index].name, listPlans[index].date, listPlans[index].started, navController)
+                Plan(Modifier, listPlans[index], trainingPlanListModel, navController)
                 Spacer(Modifier.height(10.dp))
             }
         }
@@ -85,7 +75,7 @@ fun TrainingPlanListScreen(navController: NavController, trainingPlanListModel:T
 }
 
 @Composable
-fun TopBarPlan(modifier: Modifier, addNewPlan:()->Unit, navController: NavController){
+fun TopBarPlan(modifier: Modifier, navController: NavController){
 
     Box(
         modifier
@@ -103,7 +93,7 @@ fun TopBarPlan(modifier: Modifier, addNewPlan:()->Unit, navController: NavContro
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold
             )
-            IconButton(onClick = addNewPlan) {
+            IconButton(onClick = {}) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.add),
                     contentDescription = "new",
@@ -116,12 +106,14 @@ fun TopBarPlan(modifier: Modifier, addNewPlan:()->Unit, navController: NavContro
 
 
 @Composable
-fun Plan(modifier: Modifier, planId:Int, title:String, date:String, started:Boolean, navController: NavController){
+fun Plan(modifier: Modifier, plan:Plan, trainingPlanListModel: TrainingPlanViewModel, navController: NavController){
     Box(
         modifier
             .fillMaxWidth()
             .background(color = Color.White)
-            .padding(12.dp).clickable { navController.navigate("Plan/$planId")}){
+            .padding(12.dp).clickable {
+                trainingPlanListModel.setCurrentPlan(plan)
+                navController.navigate("Plan")}){
         Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween){
             Row(verticalAlignment = Alignment.CenterVertically){
                 Icon(
@@ -131,16 +123,16 @@ fun Plan(modifier: Modifier, planId:Int, title:String, date:String, started:Bool
                 )
                 Spacer(modifier.width(10.dp))
                 Column {
-                    Text(text = title,
+                    Text(text = plan.name,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Medium
                     )
                     Row (verticalAlignment = Alignment.CenterVertically){
-                        Text(text = "Created on ${date}",
+                        Text(text = "Created on ${plan.date}",
                             fontSize = 12.sp,
                             color = Color(0XFF9E9B9B))
                         Spacer(modifier.width(20.dp))
-                        if (started){
+                        if (plan.started){
                             Box(modifier.border(1.dp, Color(0XFF7CA4F7), RoundedCornerShape(20.dp))
                                 .background(color = Color(0XA8E3EAF8))
                                 .width(90.dp)
@@ -159,7 +151,9 @@ fun Plan(modifier: Modifier, planId:Int, title:String, date:String, started:Bool
                 imageVector = Icons.Default.KeyboardArrowRight,
                 contentDescription = "Right Arrow",
                 tint = Color.Black,
-                modifier = Modifier.clickable { navController.navigate("Plan/$planId")  }
+                modifier = Modifier.clickable {
+                    trainingPlanListModel.setCurrentPlan(plan)
+                    navController.navigate("Plan")  }
 
             )
         }

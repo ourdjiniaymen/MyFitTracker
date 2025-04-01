@@ -35,11 +35,12 @@ fun NavGraph(navController: NavHostController) {
         composable("PlanEntrainements") {
             TrainingPlanListScreen(navController, trainingViewModel)
         }
-        composable("Plan/{planId}") {
-                backStackEntry ->
-            val planId = backStackEntry.arguments?.getString("planId") ?: "Unknown"
-            Log.d("Plan ID", planId)
-            TrainingPlan(navController, planId.toLong(), trainingViewModel)
+        composable("Plan") {
+            val planId = trainingViewModel.currentPlan.collectAsState(initial = null).value?.id
+            if (planId != null) {
+                Log.d("planid", planId.toString())
+                TrainingPlan(navController, planId.toLong(), trainingViewModel)
+            }
         }
         composable("History") {
             HistoryScreen(navController, trainingViewModel)

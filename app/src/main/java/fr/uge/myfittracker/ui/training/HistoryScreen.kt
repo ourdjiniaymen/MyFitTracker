@@ -66,7 +66,6 @@ import java.util.Locale
 
 @Composable
 fun HistoryScreen(navController: NavController, trainingPlanViewModel: TrainingPlanViewModel){
-    //var selectedDateMillis by remember { mutableStateOf<Long?>(null) }
     var selectedDateMillis by remember { mutableStateOf(trainingPlanViewModel.selectedDate) }
     val allPlans by trainingPlanViewModel.plans.collectAsState()
 
@@ -91,7 +90,7 @@ fun HistoryScreen(navController: NavController, trainingPlanViewModel: TrainingP
             LazyColumn {
             items(filteredPlans.size){
                     index->
-                Plan(Modifier,index+1, filteredPlans[index].name, filteredPlans[index].date, filteredPlans[index].started, navController)
+                Plan(Modifier, filteredPlans[index], trainingPlanViewModel, navController)
                 Spacer(Modifier.height(10.dp))
             }
         }
