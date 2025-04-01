@@ -66,6 +66,12 @@ class TrainingPlanViewModel (application:Application):ViewModel() {
         }
     }
 
+
+    fun initPlan(){
+        viewModelScope.launch {
+            _plans.value = repository.getAllPlans()
+        }
+    }
     fun addPlanWithSessions(planWithSessions: PlanWithSessions){
         _plans.value += planWithSessions
     }

@@ -87,7 +87,11 @@ fun SessionWithSeriesScreen(navController: NavController, viewModel: SeriesWithE
                 Button(
                     onClick = {
                         if (series.isNotEmpty()){
-                            viewModel.setCurrentSession(selectedSessionType, 1)
+                            if (repititionController.text.isNotEmpty()){
+                                viewModel.setCurrentSession(selectedSessionType, repititionController.text.toInt())
+                            }else{
+                                viewModel.setCurrentSession(selectedSessionType, 1)
+                            }
                             viewModel.addSessionWithSeries()
                             navController.popBackStack()
                         }

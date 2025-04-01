@@ -57,6 +57,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun TrainingPlanListScreen(navController: NavController, trainingPlanListModel:TrainingPlanViewModel = viewModel()){
 
+    trainingPlanListModel.initPlan()
     val listPlans by trainingPlanListModel.plans.collectAsState()
     Column(
         modifier = Modifier

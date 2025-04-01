@@ -78,10 +78,10 @@ class SeriesWithExerciseViewModel(application: Application) : ViewModel() {
     //set current session
     fun setCurrentSession(sessionType: SessionType, repitition:Int){
         if (_currentSession.value == null){
-            _currentSession.value = Session(type = sessionType, repetition = 1)
+            _currentSession.value = Session(type = sessionType, repetition = repitition)
         }
         else{
-            _currentSession.value = _currentSession.value!!.copy(type = sessionType, repetition = 1)
+            _currentSession.value = _currentSession.value!!.copy(type = sessionType, repetition = repitition)
         }
     }
     // Set current exercise
@@ -143,6 +143,7 @@ class SeriesWithExerciseViewModel(application: Application) : ViewModel() {
                 planWithSessions = newItem
             }
             _sessionSeries.value = emptyList()
+            _currentPlan.value = null
         }
         return planWithSessions
     }
