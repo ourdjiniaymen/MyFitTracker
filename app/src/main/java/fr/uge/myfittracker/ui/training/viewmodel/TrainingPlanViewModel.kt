@@ -77,6 +77,8 @@ class TrainingPlanViewModel (application:Application):ViewModel() {
     }
 
     fun setCurrentSession(session:SessionWithSeries){
+        Log.i("current session", session.session.id.toString())
+        Log.i("current session", session.series.size.toString())
         _currentSession.value = session
     }
 

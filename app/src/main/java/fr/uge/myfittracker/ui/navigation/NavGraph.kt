@@ -8,6 +8,9 @@ import androidx.navigation.compose.composable
 import fr.uge.myfittracker.ui.creation.ExerciseScreen
 import fr.uge.myfittracker.ui.creation.PlanWithSessionScreen
 import fr.uge.myfittracker.ui.creation.SessionWithSeriesScreen
+import fr.uge.myfittracker.ui.games.EndlessRunnerGame
+import fr.uge.myfittracker.ui.games.MemoryGame
+import fr.uge.myfittracker.ui.games.ReactionTimeGame
 import fr.uge.myfittracker.ui.home.HomeScreen
 import fr.uge.myfittracker.ui.home.viewmodel.HomeViewModel
 import fr.uge.myfittracker.ui.home.viewmodel.StepCounterViewModel
@@ -37,7 +40,7 @@ fun NavGraph(navController: NavHostController) {
     ) {
         composable(BottomNavItem.Home.navRoute) {
             //HomeScreen(HomeViewModel())
-            HomeScreen(homeViewModel)
+            HomeScreen(homeViewModel,navController)
         }
         composable(BottomNavItem.Train.navRoute) {
             TrainingScreen(navController)
@@ -68,6 +71,15 @@ fun NavGraph(navController: NavHostController) {
 
         composable(Constants.WORKOUT_SCREEN_ROUTE) {
             WorkoutScreen(navController, trainingViewModel )
+        }
+        composable("memoryGame") {
+            MemoryGame(navController)
+        }
+        composable("reactionTime") {
+            ReactionTimeGame(navController)
+        }
+        composable("runnerGame") {
+            EndlessRunnerGame(navController)
         }
     }
 }

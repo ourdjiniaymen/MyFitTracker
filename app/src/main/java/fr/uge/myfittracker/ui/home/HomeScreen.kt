@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import fr.uge.myfittracker.ui.home.viewmodel.HomeViewModel
 import fr.uge.myfittracker.ui.home.viewmodel.StepCounterViewModel
 import fr.uge.myfittracker.ui.theme.*
@@ -62,7 +63,8 @@ import java.text.SimpleDateFormat
 
 @Composable
 fun HomeScreen(
-    homeViewModel: HomeViewModel = viewModel()
+    homeViewModel: HomeViewModel = viewModel(),
+    navController: NavController
 ) {
 
     val dailyStepsGoal by homeViewModel.dailyStepsGoal.collectAsState()
@@ -128,7 +130,7 @@ fun HomeScreen(
             )
         }
         ValidateButton(){
-            //homeViewModel.incrementSteps(500) //just for test
+            //homeViewModel.incrementSteps(15) //just for test
             if ((dailyLevel == 0)  ) {
                 if (dailySteps >= dailyStepsGoal * 0.20){
                     homeViewModel.incrementLevel(1)
@@ -166,7 +168,7 @@ fun HomeScreen(
         }
         // Show le Dialog if showDialog is true
         if (showDialog) {
-            MinimalDialog(title = dialogTitle, text = dialogText) {
+            MinimalDialog(title = dialogTitle, text = dialogText, dailyLevel = dailyLevel, navController= navController) {
                 showDialog = false // click anywhere to close dialog
             }
         }
@@ -321,7 +323,7 @@ fun Statistics(distance: Double, calories: Double, points: Int) {
 }
 
 @Composable
-fun MinimalDialog(title: String, text: String, onDismissRequest: () -> Unit) {
+fun MinimalDialog(title: String,dailyLevel:Int,text: String,navController:NavController, onDismissRequest: () -> Unit) {
     Dialog(onDismissRequest = { onDismissRequest() }) {
         Card(
             modifier = Modifier
@@ -367,7 +369,13 @@ fun MinimalDialog(title: String, text: String, onDismissRequest: () -> Unit) {
                 if(title == "Bravo !")
                     Button(
                         onClick = {
-                            //TODO: Go to the game page
+                            if (dailyLevel == 1){
+                                navController.navigate("memoryGame")
+                            }else if(dailyLevel == 2){
+                                navController.navigate("reactionTime")
+                            }else if(dailyLevel == 3){
+                                navController.navigate("runnerGame")
+                            }
                         },
                         modifier = Modifier.fillMaxWidth(0.6f),
                         colors = ButtonDefaults.buttonColors(primary)
@@ -400,5 +408,5 @@ fun MinimalDialog(title: String, text: String, onDismissRequest: () -> Unit) {
 @Composable
 fun HomeScreenPreview(){
     //HomeScreen(HomeViewModel())
-    MinimalDialog(title="Bravo !", text="hahahahahahh"){}
+    //MinimalDialog(title="Bravo !", text="hahahahahahh"){}
 }

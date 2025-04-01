@@ -83,9 +83,13 @@ class DatabaseUnitTest {
         val planWithSessions = PlanWithSessions(
             plan = Plan(
                 name = "Beginner Workout Plan",
-                description = "A simple beginner workout plan."
+                description = "A simple beginner workout plan.",
+                date = "",
+                started = false
+
             ),
-            sessions = listOf(session1)  // Here, we are associating session1 with the plan
+            sessions = listOf(session1),  // Here, we are associating session1 with the plan
+
         )
 
         val planId = repository.insertPlanWithSessions(planWithSessions);

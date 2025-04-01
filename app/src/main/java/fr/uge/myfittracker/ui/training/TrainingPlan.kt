@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
@@ -63,14 +64,15 @@ import kotlinx.coroutines.launch
 @Composable
 fun TrainingPlan(navController: NavController, trainingPlanViewModel: TrainingPlanViewModel){
     val planDetails by trainingPlanViewModel.currentPlan.collectAsState()
-    val listSessions = remember { mutableStateListOf<SessionWithSeries>() }
+    val listSessions = planDetails?.sessions
 
 
-    LaunchedEffect(Unit) {
+
+    /**LaunchedEffect(Unit) {
         val sessions = planDetails!!.sessions
         listSessions.clear()
         listSessions.addAll(sessions)
-    }
+    }*/
     Column (modifier = Modifier
     .fillMaxSize(),
     horizontalAlignment = Alignment.CenterHorizontally) {
@@ -117,9 +119,8 @@ fun TrainingPlan(navController: NavController, trainingPlanViewModel: TrainingPl
                 Spacer(Modifier.height(10.dp))
                 LazyColumn {
 
-                    items(listSessions.size){
-                            index->
-                        Session(listSessions[index].session.type.toString(), listSessions[index], navController, trainingPlanViewModel)
+                    items(listSessions!!){session ->
+                        Session(session.session.type.toString(), session, navController, trainingPlanViewModel)
                         Spacer(Modifier.width(15.dp))
                     }
                 }
@@ -192,6 +193,12 @@ fun Session(title: String, session:SessionWithSeries, navController: NavControll
                     .height(50.dp)
                     .background(primary))
             Spacer(Modifier.width(8.dp))
+            Text(text = session.series.size.toString(),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Medium
+            )
+            Spacer(Modifier.width(8.dp))
+
            Row (
                Modifier
                    .fillMaxWidth()

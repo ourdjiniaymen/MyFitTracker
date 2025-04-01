@@ -45,33 +45,6 @@ import androidx.compose.ui.graphics.Color.Companion.White as White
 
 @Composable
 fun WorkoutScreen(navController: NavHostController, trainingPlanViewModel: TrainingPlanViewModel) {
-
-   /* val sessionWithSeries = SessionWithSeries(
-        session = Session(
-            type = SessionType.FULL_BODY,
-
-
-            repetition = 1
-        ),
-        series = listOf(
-            SeriesWithExercise(
-                exercise = Exercise(name = "Warming up", description = "Preparation description"),
-                series = Series(duration = 10, repetition = null)
-            ),
-            SeriesWithExercise(
-                exercise = Exercise(name = "Pushups", description = "pushups description"),
-                series = Series(duration = null, repetition = 15)
-            ),
-            SeriesWithExercise(
-                exercise = Exercise(name = "Pullups", description = "pullups description"),
-                series = Series(duration = null, repetition = 15)
-            ),
-            SeriesWithExercise(
-                exercise = Exercise(name = "Walk", description = "Walk description"),
-                series = Series(duration = 10, repetition = null)
-            ),
-        )
-    )*/
     val sessionWithSeries = trainingPlanViewModel.currentSession.collectAsState().value
 
     Box(
