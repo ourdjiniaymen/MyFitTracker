@@ -12,12 +12,12 @@ interface PlanDao {
     suspend fun insertPlan(plan: Plan): Long
 
 
-
     @Query("SELECT * FROM plan")
     suspend fun getAllPlans(): List<PlanWithSessions>
 
     @Query("SELECT * FROM plan")
-    suspend fun getAllPlansWithoutSessions(): List<Plan>
+    suspend fun getAllPlansWithoutSession(): List<Plan>
+
 
 
     @Query("SELECT * FROM plan WHERE id = :planId")

@@ -22,5 +22,5 @@ data class Session(
     @ColumnInfo(name = "plan_id")
     val planId: Long = 0,
     val type: SessionType,
-    val repetition: Int,
+    val repetition: Int = 1,
 )

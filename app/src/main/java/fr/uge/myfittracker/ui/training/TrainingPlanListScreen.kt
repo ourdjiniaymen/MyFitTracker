@@ -45,6 +45,7 @@ import fr.uge.myfittracker.R
 import fr.uge.myfittracker.data.model.Exercise
 //import fr.uge.myfittracker.data.model.ExerciseType
 import fr.uge.myfittracker.data.model.Plan
+import fr.uge.myfittracker.data.model.PlanWithSessions
 //import fr.uge.myfittracker.data.model.PlanExerciseCrossRef
 import fr.uge.myfittracker.data.repository.Repository
 //import fr.uge.myfittracker.ui.home.getCurrentDate
@@ -93,7 +94,9 @@ fun TopBarPlan(modifier: Modifier, navController: NavController){
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold
             )
-            IconButton(onClick = {}) {
+            IconButton(onClick = {
+                navController.navigate("planScreen")
+            }) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.add),
                     contentDescription = "new",
@@ -106,7 +109,7 @@ fun TopBarPlan(modifier: Modifier, navController: NavController){
 
 
 @Composable
-fun Plan(modifier: Modifier, plan:Plan, trainingPlanListModel: TrainingPlanViewModel, navController: NavController){
+fun Plan(modifier: Modifier, plan:PlanWithSessions, trainingPlanListModel: TrainingPlanViewModel, navController: NavController){
     Box(
         modifier
             .fillMaxWidth()
@@ -123,16 +126,16 @@ fun Plan(modifier: Modifier, plan:Plan, trainingPlanListModel: TrainingPlanViewM
                 )
                 Spacer(modifier.width(10.dp))
                 Column {
-                    Text(text = plan.name,
+                    Text(text = plan.plan.name,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Medium
                     )
                     Row (verticalAlignment = Alignment.CenterVertically){
-                        Text(text = "Created on ${plan.date}",
+                        Text(text = "Created on ${plan.plan.date}",
                             fontSize = 12.sp,
                             color = Color(0XFF9E9B9B))
                         Spacer(modifier.width(20.dp))
-                        if (plan.started){
+                        if (plan.plan.started){
                             Box(modifier.border(1.dp, Color(0XFF7CA4F7), RoundedCornerShape(20.dp))
                                 .background(color = Color(0XA8E3EAF8))
                                 .width(90.dp)

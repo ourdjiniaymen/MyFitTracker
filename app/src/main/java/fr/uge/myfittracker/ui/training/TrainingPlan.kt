@@ -61,19 +61,13 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun TrainingPlan(navController: NavController, planId:Long,  trainingPlanViewModel: TrainingPlanViewModel){
-    var listExercices = remember { mutableStateListOf<Exercise>() }
-    val planDetails by trainingPlanViewModel.getPlanById(planId).collectAsState(initial = null)
+    val planDetails by trainingPlanViewModel.currentPlan.collectAsState()
     val listSessions = remember { mutableStateListOf<SessionWithSeries>() }
-    val sessionx = Session(planId = 1, type = SessionType.STRENGTH, repetition = 1)
 
 
 
     LaunchedEffect(Unit) {
-        val exercises = trainingPlanViewModel.getListExercises(planId)
-        listExercices.clear()
-        listExercices.addAll(exercises)
-
-        val sessions = trainingPlanViewModel.getListSessionByPlanId(planId)
+        val sessions = planDetails!!.sessions
         listSessions.clear()
         listSessions.addAll(sessions)
     }
@@ -84,7 +78,7 @@ fun TrainingPlan(navController: NavController, planId:Long,  trainingPlanViewMod
             planDetails == null -> {}
 
             else -> {
-                TopBarTrainingPlan(modifier = Modifier, planDetails!!.name, planId, trainingPlanViewModel, navController)
+                TopBarTrainingPlan(modifier = Modifier, planDetails!!.plan.name, planId, trainingPlanViewModel, navController)
             }
         }
 
@@ -109,7 +103,7 @@ fun TrainingPlan(navController: NavController, planId:Long,  trainingPlanViewMod
                         when{
                             planDetails == null->{}
                             else->{
-                                Text("${planDetails!!.description}",
+                                Text("${planDetails!!.plan.description}",
                                     fontSize=16.sp, color = darkerGrey)
                             }
                         }
@@ -137,7 +131,6 @@ fun TrainingPlan(navController: NavController, planId:Long,  trainingPlanViewMod
 @Composable
 fun TopBarTrainingPlan(modifier: Modifier, title:String, planId: Long, trainingPlanViewModel: TrainingPlanViewModel, navController: NavController){
     var expanded by remember { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
     Box(
         modifier
             .fillMaxWidth()

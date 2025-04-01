@@ -72,8 +72,8 @@ fun HistoryScreen(navController: NavController, trainingPlanViewModel: TrainingP
     LaunchedEffect(selectedDateMillis) {
         trainingPlanViewModel.selectedDate = selectedDateMillis
     }
-    val filteredPlans = allPlans.filter {
-        convertDateToMillis(it.date) == selectedDateMillis && it.started == true
+    val filteredPlans = allPlans.filter {planWithSession->
+        convertDateToMillis(planWithSession.plan.date) == selectedDateMillis && planWithSession.plan.started
     }
     Column(
         modifier = Modifier

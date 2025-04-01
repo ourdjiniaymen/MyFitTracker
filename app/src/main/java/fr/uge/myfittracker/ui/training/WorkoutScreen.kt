@@ -37,13 +37,14 @@ import fr.uge.myfittracker.data.model.SessionWithSeries
 import fr.uge.myfittracker.ui.theme.secondary
 import fr.uge.myfittracker.ui.theme.textPrimary
 import fr.uge.myfittracker.ui.theme.textSecondary
+import fr.uge.myfittracker.ui.training.viewmodel.TrainingPlanViewModel
 import fr.uge.myfittracker.utils.HelperFunction
 import androidx.compose.ui.graphics.Color.Companion.White as White
 
 @Composable
-fun WorkoutScreen(navController: NavHostController) {
+fun WorkoutScreen(navController: NavHostController, trainingPlanViewModel: TrainingPlanViewModel) {
 
-    val sessionWithSeries = SessionWithSeries(
+   /* val sessionWithSeries = SessionWithSeries(
         session = Session(
             type = SessionType.FULL_BODY,
             repetition = 1
@@ -66,7 +67,8 @@ fun WorkoutScreen(navController: NavHostController) {
                 series = Series(duration = 10, repetition = null)
             ),
         )
-    )
+    )*/
+    val sessionWithSeries = trainingPlanViewModel.currentSession.collectAsState().value
 
     Box(
         modifier = Modifier
@@ -75,7 +77,7 @@ fun WorkoutScreen(navController: NavHostController) {
     ) {
         val listSeriesStat: MutableList<SeriesStat> = mutableListOf()
         var currentSeriesIndex by remember { mutableIntStateOf(0) }
-        val currentSeries = sessionWithSeries.series[currentSeriesIndex]
+        val currentSeries = sessionWithSeries!!.series[currentSeriesIndex]
         val isTimeBased = currentSeries.series.duration != null
         val onSessionFinished = {
             val sessionStat = SessionStat(
