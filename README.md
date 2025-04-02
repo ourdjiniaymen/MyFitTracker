@@ -12,12 +12,9 @@ The project follows a modular architecture ensuring **scalability**, **testabili
 - **local/**: Room database entities and DAOs.
 - **repository/**: Manages data sources (local, remote if added).
 - **model/**: Data models for app entities.
+- **viewModel/**: preparing and managing the data for ui
 
-### 🛠️ **2. Dependency Injection (`di/`)**
-- Dependency injection using **Kodein-DI**.
-- Centralized setup for injecting database, repositories, and ViewModels.
-
-### 🖥️ **3. UI Layer (`ui/`)**
+### 🖥️ **2. UI Layer (`ui/`)**
 - **navigation/**: Handles screen navigation with `NavController`.
 - **home/**, **training/**, **settings/**: Screens for core functionalities.
 - **components/**: Reusable UI components.
@@ -26,7 +23,7 @@ The project follows a modular architecture ensuring **scalability**, **testabili
     - `Theme.kt`: Theme definitions for light and dark modes.
     - `Typography.kt`: Font styles.
 
-### ⚙️ **4. Utilities (`utils/`)**
+### ⚙️ **3. Utilities (`utils/`)**
 - Extension functions for context, dates, colors, etc.
 - Logging and debugging utilities.
 
