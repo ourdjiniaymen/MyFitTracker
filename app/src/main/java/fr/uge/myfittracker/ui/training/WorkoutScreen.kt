@@ -52,7 +52,7 @@ fun WorkoutScreen(navController: NavHostController, trainingPlanViewModel: Train
             .fillMaxSize()
             .padding(12.dp)
     ) {
-        val listSeriesStat: MutableList<SeriesStat> = mutableListOf()
+        val listSeriesStat = remember { mutableStateListOf<SeriesStat>() }
         var currentSeriesIndex by remember { mutableIntStateOf(0) }
         val currentSeries = sessionWithSeries!!.series[currentSeriesIndex]
         val isTimeBased = currentSeries.series.duration != null
@@ -61,9 +61,10 @@ fun WorkoutScreen(navController: NavHostController, trainingPlanViewModel: Train
                 session = sessionWithSeries.session,
                 seriesStat = listSeriesStat
             )
+            trainingPlanViewModel.setSessionStat(sessionStat)
             // todo : save session stat in db
             Log.d("Session stat", sessionStat.toString())
-            // navController.navigate("{Constants.RECAP_SCREEN}/$sessionStat")
+            navController.navigate("sessionRecap")
         }
 
         SeriesExecutionScreen(
@@ -77,14 +78,14 @@ fun WorkoutScreen(navController: NavHostController, trainingPlanViewModel: Train
                 if (currentSeriesIndex > 0) currentSeriesIndex--
             },
             onSkip = { achievedScore ->
-                listSeriesStat.add(
+                Log.i("list series*****", listSeriesStat.toString())
+                listSeriesStat +=
                     SeriesStat(
                         series = currentSeries,
                         achievedScore = achievedScore,
                         isCompleted = false
-
-                    )
                 )
+                Log.i("list series", listSeriesStat.toString())
                 if (currentSeriesIndex == sessionWithSeries.series.size - 1) {
                     onSessionFinished()
                 } else {
@@ -95,14 +96,14 @@ fun WorkoutScreen(navController: NavHostController, trainingPlanViewModel: Train
                 navController.navigate("Plan")
             },
             onFinished = {
-                listSeriesStat.add(
-                    SeriesStat(
+                Log.i("list series *********", listSeriesStat.toString())
+                listSeriesStat+=SeriesStat(
                         series = currentSeries,
                         achievedScore = if (isTimeBased) currentSeries.series.duration
                             ?: 0 else currentSeries.series.repetition ?: 0,
                         isCompleted = true
-                    )
                 )
+                Log.i("list series", listSeriesStat.toString())
                 if (currentSeriesIndex == sessionWithSeries.series.size - 1) {
                     onSessionFinished()
                 } else {

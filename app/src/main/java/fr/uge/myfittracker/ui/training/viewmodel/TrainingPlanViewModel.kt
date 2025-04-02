@@ -17,6 +17,7 @@ import fr.uge.myfittracker.data.model.PlanWithSessions
 import fr.uge.myfittracker.data.model.Series
 import fr.uge.myfittracker.data.model.SeriesWithExercise
 import fr.uge.myfittracker.data.model.Session
+import fr.uge.myfittracker.data.model.SessionStat
 import fr.uge.myfittracker.data.model.SessionWithSeries
 //import fr.uge.myfittracker.data.model.PlanExerciseCrossRef
 import fr.uge.myfittracker.data.repository.Repository
@@ -60,6 +61,9 @@ class TrainingPlanViewModel (application:Application):ViewModel() {
     var currentSession : StateFlow<SessionWithSeries?> = _currentSession.asStateFlow()
     var currentPlan : StateFlow<PlanWithSessions?> = _currentPlan.asStateFlow()
 
+    private val _currentSessionStat = MutableStateFlow<SessionStat?>(null)
+    val currentSessionStat: StateFlow<SessionStat?> = _currentSessionStat.asStateFlow()
+
     init {
         viewModelScope.launch {
             _plans.value = repository.getAllPlans()
@@ -91,19 +95,7 @@ class TrainingPlanViewModel (application:Application):ViewModel() {
         return repository.getAllPlans()
     }
 
-    /*fun fetchPlans(){
-        viewModelScope.launch {
-            _plans.value = getListPlans()
-        }
-    }*/
-
-    /*suspend fun getListSessionByPlanId(planId: Long):List<SessionWithSeries>{
-        return sessionDao.getSessionFromPlanId(planId)
+    fun setSessionStat(sessionStat: SessionStat){
+        _currentSessionStat.value = sessionStat
     }
-
-    fun getPlanById(planId: Long):Flow<Plan?>{
-        return flow {
-            emit( planDao.getPlanById(planId))
-        }.flowOn(Dispatchers.IO)
-    }*/
 }

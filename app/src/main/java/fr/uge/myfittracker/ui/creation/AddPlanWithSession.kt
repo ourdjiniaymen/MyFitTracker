@@ -100,8 +100,8 @@ fun PlanWithSessionScreen(
                             )
                             val plan = viewModel.addPlanWithSession()
                             if (plan != null)
-                                trainingPlanViewModel.addPlanWithSessions(planWithSessions = plan)
-                            navController.navigate("PlanEntrainements")
+                                trainingPlanViewModel.initPlan()
+                            navController.popBackStack()
                         } else {
                             Toast.makeText(
                                 context,

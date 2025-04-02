@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
@@ -56,9 +57,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun TrainingPlanListScreen(navController: NavController, trainingPlanListModel:TrainingPlanViewModel = viewModel()){
-
     trainingPlanListModel.initPlan()
-    val listPlans by trainingPlanListModel.plans.collectAsState()
+    val listPlans = trainingPlanListModel.plans.collectAsState().value
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -67,9 +67,9 @@ fun TrainingPlanListScreen(navController: NavController, trainingPlanListModel:T
         TopBarPlan(Modifier, navController = navController)
         Spacer(Modifier.height(20.dp))
         LazyColumn {
-            items(listPlans.size){
-                index->
-                Plan(Modifier, listPlans[index], trainingPlanListModel, navController)
+            items(listPlans){
+                plan->
+                Plan(Modifier, plan, trainingPlanListModel, navController)
                 Spacer(Modifier.height(10.dp))
             }
         }
@@ -78,7 +78,6 @@ fun TrainingPlanListScreen(navController: NavController, trainingPlanListModel:T
 
 @Composable
 fun TopBarPlan(modifier: Modifier, navController: NavController){
-
     Box(
         modifier
             .fillMaxWidth()

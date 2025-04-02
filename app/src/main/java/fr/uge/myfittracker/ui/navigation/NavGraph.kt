@@ -22,6 +22,7 @@ import fr.uge.myfittracker.ui.training.TrainingPlanListScreen
 import fr.uge.myfittracker.ui.training.TrainingScreen
 import fr.uge.myfittracker.ui.training.WorkoutScreen
 import fr.uge.myfittracker.ui.training.viewmodel.TrainingPlanViewModel
+import fr.uge.myfittracker.ui.trainingRecap.SessionRecapScreen
 import fr.uge.myfittracker.utils.Constants
 
 @Composable
@@ -80,6 +81,9 @@ fun NavGraph(navController: NavHostController) {
         }
         composable("runnerGame") {
             EndlessRunnerGame(navController)
+        }
+        composable("sessionRecap") {
+            SessionRecapScreen(navController, trainingViewModel)
         }
     }
 }
