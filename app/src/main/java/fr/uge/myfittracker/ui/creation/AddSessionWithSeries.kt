@@ -48,7 +48,7 @@ fun SessionWithSeriesScreen(navController: NavController, viewModel: SeriesWithE
     var defaultRepitition = if (currentSession != null){
         currentSession?.repetition.toString()
     }else{
-        ""
+        "1"
     }
     var repititionController by remember { mutableStateOf(TextFieldValue(defaultRepitition)) }
     val series by viewModel.exerciseSeries.collectAsState()
@@ -198,7 +198,10 @@ fun SessionWithSeriesScreen(navController: NavController, viewModel: SeriesWithE
         }
         Button(
             onClick = {
-                viewModel.setCurrentSession(selectedSessionType, repitition = 1)
+                if (repititionController.text.isNotEmpty())
+                    viewModel.setCurrentSession(selectedSessionType, repitition = repititionController.text.toInt())
+                else
+                    viewModel.setCurrentSession(selectedSessionType, repitition = 1)
                 navController.navigate("exerciseScreen")
             },
             modifier = Modifier

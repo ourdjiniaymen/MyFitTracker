@@ -2,6 +2,7 @@ package fr.uge.myfittracker.ui.games
 
 import kotlin.collections.plus
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Canvas
@@ -103,6 +104,7 @@ fun EndlessRunnerGame(navController: NavController) {
             },
         contentAlignment = Alignment.Center
     ) {
+
         Canvas(
             modifier = Modifier
                 .size(400.dp, 300.dp)
@@ -132,41 +134,53 @@ fun EndlessRunnerGame(navController: NavController) {
         }
 
         // Score
-        Text(
-            text = "Score: ${gameState.score} | Top: ${gameState.highScore}",
-            color = Color.Black,
-            fontSize = 20.sp,
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
-
-        // Game over screen
-        if (!gameState.isRunning) {
-            Column(
-                modifier = Modifier.align(Alignment.Center),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+        Column(verticalArrangement = Arrangement.SpaceAround,
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            Row {
                 Text(
-                    text = "GAME OVER",
-                    color = Color.Red,
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "appuyez pour rejouer",
+                    text = "Score: ${gameState.score}",
                     color = Color.Black,
-                    fontSize = 20.sp
+                    fontSize = 20.sp,
                 )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = " | Top: ${gameState.highScore}",
+                    color = Color.Black,
+                    fontSize = 20.sp,
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = primary,
+                    contentColor = White
+                ),
+                onClick = { navController.popBackStack()  }) {
+                Text("Quitter", color = White)
+            }
+            // Game over screen
+            if (!gameState.isRunning) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "GAME OVER",
+                        color = Color.Red,
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "appuyez pour rejouer",
+                        color = Color.Black,
+                        fontSize = 20.sp
+                    )
 
-                Button(
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = primary,
-                        contentColor = White
-                    ),
-                    onClick = { navController.popBackStack()  }) {
-                    Text("Quitter")
                 }
             }
         }
+
+
+
     }
 }
 

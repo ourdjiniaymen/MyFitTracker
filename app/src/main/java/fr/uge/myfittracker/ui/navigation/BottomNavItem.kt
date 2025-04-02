@@ -11,5 +11,5 @@ sealed class BottomNavItem(
 ) {
     data object Home : BottomNavItem("home", R.string.nav_home, R.drawable.ic_home)
     data object Train : BottomNavItem("train", R.string.nav_training, R.drawable.ic_training)
-    data object Settings : BottomNavItem("settings", R.string.nav_settings, R.drawable.ic_settings)
+    //data object Settings : BottomNavItem("settings", R.string.nav_settings, R.drawable.ic_settings)
 }

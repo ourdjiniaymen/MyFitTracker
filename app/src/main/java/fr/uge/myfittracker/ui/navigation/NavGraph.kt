@@ -41,14 +41,14 @@ fun NavGraph(navController: NavHostController) {
     ) {
         composable(BottomNavItem.Home.navRoute) {
             //HomeScreen(HomeViewModel())
-            HomeScreen(homeViewModel,navController)
+           HomeScreen(homeViewModel,navController)
         }
         composable(BottomNavItem.Train.navRoute) {
             TrainingScreen(navController)
         }
-        composable(BottomNavItem.Settings.navRoute) {
+        /*composable(BottomNavItem.Settings.navRoute) {
             SettingsScreen()
-        }
+        }*/
         composable("sessionScreen") {
             SessionWithSeriesScreen(navController, seriesWithExerciseViewModel)
         }
