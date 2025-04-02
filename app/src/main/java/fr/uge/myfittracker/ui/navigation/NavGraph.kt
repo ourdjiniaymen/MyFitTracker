@@ -46,9 +46,9 @@ fun NavGraph(navController: NavHostController) {
         composable(BottomNavItem.Train.navRoute) {
             TrainingScreen(navController)
         }
-        composable(BottomNavItem.Settings.navRoute) {
+        /*composable(BottomNavItem.Settings.navRoute) {
             SettingsScreen()
-        }
+        }*/
         composable("sessionScreen") {
             SessionWithSeriesScreen(navController, seriesWithExerciseViewModel)
         }

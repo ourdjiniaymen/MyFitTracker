@@ -19,7 +19,7 @@ fun BottomNavBar(navController: NavController, darkTheme: Boolean) {
     val items = listOf(
         BottomNavItem.Home,
         BottomNavItem.Train,
-        BottomNavItem.Settings
+        //BottomNavItem.Settings
     )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()

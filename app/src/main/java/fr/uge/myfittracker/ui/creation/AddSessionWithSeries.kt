@@ -198,7 +198,10 @@ fun SessionWithSeriesScreen(navController: NavController, viewModel: SeriesWithE
         }
         Button(
             onClick = {
-                viewModel.setCurrentSession(selectedSessionType, repitition = 1)
+                if(repititionController.text.isNotEmpty())
+                    viewModel.setCurrentSession(selectedSessionType, repitition = repititionController.text.toInt())
+                else
+                    viewModel.setCurrentSession(selectedSessionType, repitition = 1)
                 navController.navigate("exerciseScreen")
             },
             modifier = Modifier

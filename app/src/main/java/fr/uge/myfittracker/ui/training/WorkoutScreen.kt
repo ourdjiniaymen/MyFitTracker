@@ -46,7 +46,10 @@ import androidx.compose.ui.graphics.Color.Companion.White as White
 @Composable
 fun WorkoutScreen(navController: NavHostController, trainingPlanViewModel: TrainingPlanViewModel) {
     val sessionWithSeries = trainingPlanViewModel.currentSession.collectAsState().value
-
+    val listSeries = mutableListOf<SeriesWithExercise>()
+    repeat(sessionWithSeries?.session!!.repetition){
+        listSeries.addAll(sessionWithSeries.series)
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -54,7 +57,7 @@ fun WorkoutScreen(navController: NavHostController, trainingPlanViewModel: Train
     ) {
         val listSeriesStat = remember { mutableStateListOf<SeriesStat>() }
         var currentSeriesIndex by remember { mutableIntStateOf(0) }
-        val currentSeries = sessionWithSeries!!.series[currentSeriesIndex]
+        val currentSeries = listSeries[currentSeriesIndex]
         val isTimeBased = currentSeries.series.duration != null
         val onSessionFinished = {
             val sessionStat = SessionStat(
@@ -69,7 +72,7 @@ fun WorkoutScreen(navController: NavHostController, trainingPlanViewModel: Train
 
         SeriesExecutionScreen(
             exerciseName = currentSeries.exercise.name,
-            previousExerciseName = if (currentSeriesIndex > 0) sessionWithSeries.series[currentSeriesIndex].exercise.name else null,
+            previousExerciseName = if (currentSeriesIndex > 0) listSeries[currentSeriesIndex].exercise.name else null,
             exerciseDescription = currentSeries.exercise.description,
             isTimeBased = isTimeBased,
             duration = if (isTimeBased) currentSeries.series.duration else null,
@@ -86,7 +89,7 @@ fun WorkoutScreen(navController: NavHostController, trainingPlanViewModel: Train
                         isCompleted = false
                 )
                 Log.i("list series", listSeriesStat.toString())
-                if (currentSeriesIndex == sessionWithSeries.series.size - 1) {
+                if (currentSeriesIndex == listSeries.size - 1) {
                     onSessionFinished()
                 } else {
                     currentSeriesIndex++
@@ -104,7 +107,7 @@ fun WorkoutScreen(navController: NavHostController, trainingPlanViewModel: Train
                         isCompleted = true
                 )
                 Log.i("list series", listSeriesStat.toString())
-                if (currentSeriesIndex == sessionWithSeries.series.size - 1) {
+                if (currentSeriesIndex == listSeries.size - 1) {
                     onSessionFinished()
                 } else {
                     currentSeriesIndex++
